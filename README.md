@@ -8,8 +8,10 @@
 ---
 
 ## 📧 Integrantes
-*(Próximamente se añadirán los nombres y correos de los 4 integrantes activos)*
-
+JUAN DAVID PEÑA LOZADA - jupenalo@unal.edu.co
+OSCAR DANIEL QUIROZ AGUAS - 
+ANDRES FELIPE CASTRO MALAVER -
+LUIS RODRIGO RIVERA RIVERA -
 ---
 
 ## 📌 Descripción del Proyecto
