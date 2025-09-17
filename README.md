@@ -3,7 +3,7 @@
 ---
 
 ## 👥 Grupo
-**BIOS**
+**BIOS (brutos intentando operar sistemas)**
 
 ---
 
