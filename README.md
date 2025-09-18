@@ -11,7 +11,7 @@
 - JUAN DAVID PEÑA LOZADA jupenalo@unal.edu.co
 - OSCAR DANIEL QUIROZ AGUAS  oaguas@unal.edu.co
 - ANDRES FELIPE CASTRO MALAVER 
-- LUIS RODRIGO RIVERA RIVERA 
+- LUIS RODRIGO RIVERA RIVERA lriverari@unal.edu.co
 ---
 
 ## 📌 Descripción del Proyecto
