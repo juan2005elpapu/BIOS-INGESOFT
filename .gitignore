@@ -2,4 +2,4 @@ __pycache__/
 .env
 prompt.json
 .db
-.sqlite3
+db.sqlite3
