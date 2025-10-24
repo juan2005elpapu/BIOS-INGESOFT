@@ -79,28 +79,38 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
-DEFAULT_DB = {
-    "ENGINE": "django.db.backends.sqlite3",
-    "NAME": BASE_DIR / "db.sqlite3",
-}
+SEARCH_PATH = os.getenv("DB_SEARCH_PATH", "public,extensions").strip()
+
+def can_reach_host(host: str, port: int) -> bool:
+    try:
+        socket.create_connection((host, port), timeout=5)
+    except OSError:
+        return False
+    return True
+
+def build_sqlite_config() -> dict:
+    return {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 
 if DATABASE_URL:
-    candidate_db = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-    host = candidate_db.get("HOST", "")
-    port = candidate_db.get("PORT") or 5432
-    try:
-        socket.getaddrinfo(host, port)
-    except socket.gaierror:
-        DATABASES = {"default": DEFAULT_DB}
-    else:
-        options = candidate_db.setdefault("OPTIONS", {})
-        options.setdefault("sslmode", os.getenv("DB_SSLMODE", "require"))
-        search_path = os.getenv("DB_SEARCH_PATH", "public,extensions").strip()
-        if search_path:
-            options.setdefault("options", f"-c search_path={search_path}")
+    candidate_db = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=True,
+    )
+    host = candidate_db.get("HOST") or ""
+    port = int(candidate_db.get("PORT") or 5432)
+    if host and can_reach_host(host, port):
+        if SEARCH_PATH:
+            candidate_db.setdefault("OPTIONS", {})
+            candidate_db["OPTIONS"]["options"] = f"-c search_path={SEARCH_PATH}"
         DATABASES = {"default": candidate_db}
+    else:
+        DATABASES = {"default": build_sqlite_config()}
 else:
-    DATABASES = {"default": DEFAULT_DB}
+    DATABASES = {"default": build_sqlite_config()}
 
 
 # Password validation
