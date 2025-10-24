@@ -3,3 +3,4 @@ __pycache__/
 prompt.json
 .db
 db.sqlite3
+.DS_Store
