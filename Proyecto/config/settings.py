@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import socket
 from pathlib import Path
 
 import dj_database_url
@@ -77,12 +78,29 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.parse(
-        os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
-        conn_max_age=600,
-    )
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+DEFAULT_DB = {
+    "ENGINE": "django.db.backends.sqlite3",
+    "NAME": BASE_DIR / "db.sqlite3",
 }
+
+if DATABASE_URL:
+    candidate_db = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    host = candidate_db.get("HOST", "")
+    port = candidate_db.get("PORT") or 5432
+    try:
+        socket.getaddrinfo(host, port)
+    except socket.gaierror:
+        DATABASES = {"default": DEFAULT_DB}
+    else:
+        options = candidate_db.setdefault("OPTIONS", {})
+        options.setdefault("sslmode", os.getenv("DB_SSLMODE", "require"))
+        search_path = os.getenv("DB_SEARCH_PATH", "public,extensions").strip()
+        if search_path:
+            options.setdefault("options", f"-c search_path={search_path}")
+        DATABASES = {"default": candidate_db}
+else:
+    DATABASES = {"default": DEFAULT_DB}
 
 
 # Password validation
