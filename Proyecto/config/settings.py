@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "tailwind",
+    "theme",
 ]
 
 MIDDLEWARE = [
@@ -156,3 +158,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+TAILWIND_APP_NAME = "theme"
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
