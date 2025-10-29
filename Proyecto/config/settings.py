@@ -37,6 +37,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # Application definition
 
 INSTALLED_APPS = [
+    "unfold",                 # <- antes del admin
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -171,4 +172,11 @@ NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "dashboard:home"
 LOGOUT_REDIRECT_URL = "accounts:login"
+
+UNFOLD = {
+    "SITE_TITLE": "AgroManager",
+    "SITE_HEADER": "Administración AgroManager",
+    "SITE_SUBHEADER": "Panel ganadero",
+    "SITE_SYMBOL": "agriculture",
+}
 
