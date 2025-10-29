@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Ingresar · AgroManager{% endblock %}
+
+{% block body %}
+<section class="bios-auth-page">
+    <div class="bios-auth-header">
+        <span class="material-symbols-outlined bios-auth-icon">shield_person</span>
+        <h1 class="bios-auth-title">Bienvenido de nuevo</h1>
+        <p class="bios-auth-subtitle">Gestiona tu producción ganadera con AgroManager.</p>
+    </div>
+
+    <div class="bios-auth-wrapper max-w-md">
+        <form method="post" class="bios-auth-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="bios-error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="bios-field">
+                <label class="bios-label" for="{{ form.email.id_for_label }}">Correo</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-green-300">mail</span>
+                    <input
+                        type="email"
+                        name="{{ form.email.html_name }}"
+                        id="{{ form.email.id_for_label }}"
+                        value="{{ form.email.value|default:'' }}"
+                        placeholder="correo@gmail.com"
+                        class="bios-input pl-12"
+                        required
+                    />
+                </div>
+                {% if form.email.errors %}
+                <p class="bios-error-msg">{{ form.email.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="bios-field">
+                <label class="bios-label" for="{{ form.password.id_for_label }}">Contraseña</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-lg text-green-300">lock</span>
+                    <input
+                        type="password"
+                        name="{{ form.password.html_name }}"
+                        id="{{ form.password.id_for_label }}"
+                        placeholder="afsSFGs120"
+                        class="bios-input pl-12"
+                        required
+                    />
+                </div>
+                {% if form.password.errors %}
+                <p class="bios-error-msg">{{ form.password.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="bios-auth-actions">
+                <button type="submit" class="bios-button-primary">
+                    <span class="material-symbols-outlined text-base">login</span>
+                    Ingresar
+                </button>
+                <a href="{% url 'accounts:signup' %}" class="bios-button-outline">
+                    <span class="material-symbols-outlined text-base">person_add</span>
+                    Crear cuenta
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}AgroManager · Panel{% endblock %}
+
+{% block body %}
+<div class="bios-layout">
+    <div id="bios-sidebar-backdrop" class="bios-sidebar-backdrop"></div>
+
+    <aside id="bios-sidebar" class="bios-sidebar">
+        <div class="bios-sidebar-header">
+            <div class="bios-sidebar-icon">
+                <span class="material-symbols-outlined" id="sidebar-brand-icon">agriculture</span>
+            </div>
+            <div>
+                <p class="bios-sidebar-title">AgroManager</p>
+                <p class="bios-sidebar-caption">Gestión ganadera</p>
+            </div>
+            <button id="bios-sidebar-close" class="bios-sidebar-close" type="button" aria-label="Cerrar menú">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="bios-sidebar-nav">
+            <a href="{% url 'dashboard:home' %}" class="bios-nav-link bios-nav-link--active">
+                <span class="material-symbols-outlined bios-nav-icon">dashboard</span>
+                Dashboard
+            </a>
+            <a href="#" class="bios-nav-link">
+                <span class="material-symbols-outlined bios-nav-icon">hive</span>
+                Lotes
+            </a>
+            <a href="#" class="bios-nav-link">
+                <span class="material-symbols-outlined bios-nav-icon">pets</span>
+                Animales
+            </a>
+            <a href="#" class="bios-nav-link">
+                <span class="material-symbols-outlined bios-nav-icon">route</span>
+                Tracking
+            </a>
+            <a href="#" class="bios-nav-link">
+                <span class="material-symbols-outlined bios-nav-icon">request_quote</span>
+                Costs
+            </a>
+        </nav>
+
+        <div class="mt-auto">
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="bios-logout-btn">
+                    <span class="material-symbols-outlined bios-nav-icon">logout</span>
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="bios-content">
+        <header class="bios-topbar">
+            <button id="bios-nav-toggle" class="bios-nav-toggle" type="button" aria-controls="bios-sidebar" aria-expanded="false">
+                <span class="material-symbols-outlined" id="icon-open" data-role="icon-open">menu</span>
+                <span class="material-symbols-outlined" id="icon-close" data-role="icon-close" style="display: none;">close</span>
+            </button>
+            <h1 class="bios-topbar-title">{% block topbar_title %}AgroManager{% endblock %}</h1>
+        </header>
+
+        <main class="bios-main">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.getElementById("bios-sidebar");
+    const toggle = document.getElementById("bios-nav-toggle");
+    const backdrop = document.getElementById("bios-sidebar-backdrop");
+    const iconOpen = document.getElementById("icon-open");
+    const iconClose = document.getElementById("icon-close");
+    const closeBtn = document.getElementById("bios-sidebar-close");
+
+    const isMobile = () => window.innerWidth < 768;
+
+    const setIconState = (open) => {
+        if (!iconOpen || !iconClose) return;
+        if (isMobile()) {
+            iconOpen.style.display = open ? "none" : "inline-flex";
+            iconClose.style.display = open ? "inline-flex" : "none";
+        } else {
+            iconOpen.style.display = "inline-flex";
+            iconClose.style.display = "none";
+        }
+    };
+
+    const setSidebarState = (open) => {
+        const mobile = isMobile();
+        const finalOpen = mobile ? !!open : true;
+
+        sidebar?.classList.toggle("bios-sidebar--open", finalOpen);
+        backdrop?.classList.toggle("hidden", !mobile || !finalOpen);
+        toggle?.setAttribute("aria-expanded", String(finalOpen));
+        setIconState(finalOpen);
+    };
+
+    toggle?.addEventListener("click", () => {
+        const isOpen = sidebar?.classList.contains("bios-sidebar--open");
+        setSidebarState(!isOpen);
+    });
+
+    closeBtn?.addEventListener("click", () => setSidebarState(false));
+
+    backdrop?.addEventListener("click", () => setSidebarState(false));
+
+    window.addEventListener("resize", () => {
+        setSidebarState(!isMobile());
+    });
+
+    setSidebarState(!isMobile());
+});
+</script>
+{% endblock %}
