@@ -4,3 +4,5 @@ prompt.json
 .db
 db.sqlite3
 .DS_Store
+.venv
+
