@@ -21,11 +21,11 @@
         </div>
 
         <nav class="bios-sidebar-nav">
-            <a href="{% url 'dashboard:home' %}" class="bios-nav-link bios-nav-link--active">
+            <a href="{% url 'dashboard:home' %}" class="bios-nav-link">
                 <span class="material-symbols-outlined bios-nav-icon">dashboard</span>
                 Dashboard
             </a>
-            <a href="#" class="bios-nav-link">
+            <a href="{% url 'batches:list' %}" class="bios-nav-link">
                 <span class="material-symbols-outlined bios-nav-icon">hive</span>
                 Lotes
             </a>
@@ -43,7 +43,7 @@
             </a>
         </nav>
 
-        <div class="mt-auto">
+        <div class="bios-sidebar-footer">
             <form method="post" action="{% url 'accounts:logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="bios-logout-btn">
@@ -57,13 +57,22 @@
     <div class="bios-content">
         <header class="bios-topbar">
             <button id="bios-nav-toggle" class="bios-nav-toggle" type="button" aria-controls="bios-sidebar" aria-expanded="false">
-                <span class="material-symbols-outlined" id="icon-open" data-role="icon-open">menu</span>
-                <span class="material-symbols-outlined" id="icon-close" data-role="icon-close" style="display: none;">close</span>
+                <span class="material-symbols-outlined" id="icon-open">menu</span>
             </button>
             <h1 class="bios-topbar-title">{% block topbar_title %}AgroManager{% endblock %}</h1>
         </header>
 
         <main class="bios-main">
+            {% if messages %}
+            <div class="bios-messages-container">
+                {% for message in messages %}
+                <div class="bios-message {% if message.tags == 'success' %}bios-message-success{% elif message.tags == 'error' %}bios-message-error{% else %}bios-message-info{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -77,30 +86,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("bios-nav-toggle");
     const backdrop = document.getElementById("bios-sidebar-backdrop");
     const iconOpen = document.getElementById("icon-open");
-    const iconClose = document.getElementById("icon-close");
     const closeBtn = document.getElementById("bios-sidebar-close");
 
     const isMobile = () => window.innerWidth < 768;
-
-    const setIconState = (open) => {
-        if (!iconOpen || !iconClose) return;
-        if (isMobile()) {
-            iconOpen.style.display = open ? "none" : "inline-flex";
-            iconClose.style.display = open ? "inline-flex" : "none";
-        } else {
-            iconOpen.style.display = "inline-flex";
-            iconClose.style.display = "none";
-        }
-    };
 
     const setSidebarState = (open) => {
         const mobile = isMobile();
         const finalOpen = mobile ? !!open : true;
 
         sidebar?.classList.toggle("bios-sidebar--open", finalOpen);
-        backdrop?.classList.toggle("hidden", !mobile || !finalOpen);
+        backdrop?.classList.toggle("bios-backdrop-visible", mobile && finalOpen);
         toggle?.setAttribute("aria-expanded", String(finalOpen));
-        setIconState(finalOpen);
     };
 
     toggle?.addEventListener("click", () => {
@@ -108,9 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
         setSidebarState(!isOpen);
     });
 
-    closeBtn?.addEventListener("click", () => setSidebarState(false));
-
     backdrop?.addEventListener("click", () => setSidebarState(false));
+    closeBtn?.addEventListener("click", () => setSidebarState(false));
 
     window.addEventListener("resize", () => {
         setSidebarState(!isMobile());

@@ -1,0 +1,142 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block topbar_title %}Gestión de Lotes{% endblock %}
+
+{% block content %}
+<div class="batch-container">
+    <div class="batch-header">
+        <div class="batch-title-section">
+            <h1 class="batch-title">Mis Lotes</h1>
+            <p class="batch-subtitle">Administra tus lotes ganaderos</p>
+        </div>
+        <a href="{% url 'batches:create' %}" class="bios-button-primary batch-header-button">
+            <span class="material-symbols-outlined bios-icon-base">add</span>
+            Crear Lote
+        </a>
+    </div>
+
+    <div class="batch-search-card">
+        <form method="get" class="batch-search-form">
+            <div class="bios-search-container">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search_query }}"
+                    placeholder="Buscar por nombre o dirección..."
+                    class="bios-input"
+                />
+            </div>
+            <div class="bios-search-actions">
+                <select name="order" class="bios-select">
+                    <option value="-created_at" {% if current_order == "-created_at" %}selected{% endif %}>Más recientes</option>
+                    <option value="created_at" {% if current_order == "created_at" %}selected{% endif %}>Más antiguos</option>
+                    <option value="nombre" {% if current_order == "nombre" %}selected{% endif %}>A-Z</option>
+                    <option value="-nombre" {% if current_order == "-nombre" %}selected{% endif %}>Z-A</option>
+                </select>
+                <button type="submit" class="bios-button-icon-only">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if batches %}
+    <div class="batch-grid">
+        {% for batch in batches %}
+        <div class="batch-card group">
+            <div class="batch-image-wrapper">
+                {% if batch.imagen %}
+                <img src="{{ batch.imagen.url }}" alt="{{ batch.nombre }}" class="batch-image bios-group-hover-scale" />
+                {% else %}
+                <div class="batch-image-placeholder">
+                    <span class="material-symbols-outlined bios-icon-lg">image</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="batch-info">
+                <h3 class="batch-name">{{ batch.nombre }}</h3>
+                
+                {% if batch.direccion %}
+                <div class="batch-location">
+                    <span class="material-symbols-outlined bios-icon-base">location_on</span>
+                    <span class="bios-text-clamp-2">{{ batch.direccion }}</span>
+                </div>
+                {% endif %}
+
+                <div class="batch-date">
+                    <span class="material-symbols-outlined bios-icon-sm">calendar_today</span>
+                    <span>{{ batch.created_at|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+
+            <div class="batch-actions">
+                <a href="{% url 'batches:update' batch.pk %}" class="bios-button-outline bios-batch-action-btn">
+                    <span class="material-symbols-outlined bios-icon-sm">edit</span>
+                    Editar
+                </a>
+                <form method="post" action="{% url 'batches:delete' batch.pk %}" class="bios-batch-action-form" onsubmit="return confirm('¿Eliminar este lote?')">
+                    {% csrf_token %}
+                    <button type="submit" class="bios-button-outline bios-button-delete bios-batch-action-btn">
+                        <span class="material-symbols-outlined bios-icon-sm">delete</span>
+                        Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="batch-pagination">
+        {% if page_obj.has_previous %}
+        <div class="bios-pagination-nav">
+            <a href="?page=1&search={{ search_query }}&order={{ current_order }}" class="bios-button-outline">
+                <span class="material-symbols-outlined bios-icon-sm">first_page</span>
+                Primera
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&order={{ current_order }}" class="bios-button-outline">
+                <span class="material-symbols-outlined bios-icon-sm">chevron_left</span>
+                Anterior
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="batch-pagination-info">
+            <span class="material-symbols-outlined bios-icon-sm">article</span>
+            Página <span class="bios-text-highlight">{{ page_obj.number }}</span> de <span class="bios-text-highlight">{{ page_obj.paginator.num_pages }}</span>
+        </div>
+
+        {% if page_obj.has_next %}
+        <div class="bios-pagination-nav">
+            <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&order={{ current_order }}" class="bios-button-outline">
+                Siguiente
+                <span class="material-symbols-outlined bios-icon-sm">chevron_right</span>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&order={{ current_order }}" class="bios-button-outline">
+                Última
+                <span class="material-symbols-outlined bios-icon-sm">last_page</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="batch-empty-state">
+        <div class="batch-empty-icon-wrapper">
+            <span class="material-symbols-outlined bios-icon-lg">hive</span>
+        </div>
+        <h3 class="batch-empty-title">No tienes lotes registrados</h3>
+        <p class="batch-empty-description">
+            Comienza creando tu primer lote para organizar y gestionar tus animales de forma eficiente
+        </p>
+        <a href="{% url 'batches:create' %}" class="bios-button-primary">
+            <span class="material-symbols-outlined bios-icon-base">add</span>
+            Crear mi primer lote
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

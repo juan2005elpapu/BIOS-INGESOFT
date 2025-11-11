@@ -1,0 +1,76 @@
+{% extends "basic.html" %}
+
+{% block topbar_title %}{% if object %}Editar Lote{% else %}Crear Lote{% endif %}{% endblock %}
+
+{% block content %}
+<div class="bios-form-container">
+    <div class="bios-form-header">
+        <a href="{% url 'batches:list' %}" class="bios-button-outline">
+            <span class="material-symbols-outlined bios-icon-base">arrow_back</span>
+        </a>
+        <h1 class="batch-title">
+            {% if object %}Editar Lote{% else %}Crear Nuevo Lote{% endif %}
+        </h1>
+    </div>
+
+    <div class="bios-card">
+        <form method="post" enctype="multipart/form-data" class="bios-auth-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="bios-error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="bios-field">
+                <label class="bios-label" for="{{ form.nombre.id_for_label }}">
+                    {{ form.nombre.label }}
+                </label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                <p class="bios-error-msg">{{ form.nombre.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="bios-field">
+                <label class="bios-label" for="{{ form.direccion.id_for_label }}">
+                    {{ form.direccion.label }}
+                </label>
+                {{ form.direccion }}
+                {% if form.direccion.errors %}
+                <p class="bios-error-msg">{{ form.direccion.errors|join:", " }}</p>
+                {% endif %}
+            </div>
+
+            <div class="bios-field">
+                <label class="bios-label" for="{{ form.imagen.id_for_label }}">
+                    {{ form.imagen.label }}
+                </label>
+                
+                {% if object.imagen %}
+                <div class="bios-image-preview">
+                    <img src="{{ object.imagen.url }}" alt="{{ object.nombre }}" class="bios-image-preview-img" />
+                </div>
+                {% endif %}
+
+                {{ form.imagen }}
+                {% if form.imagen.errors %}
+                <p class="bios-error-msg">{{ form.imagen.errors|join:", " }}</p>
+                {% endif %}
+                <p class="bios-help-text">Formatos aceptados: JPG, PNG, WebP (máx. 5MB)</p>
+            </div>
+
+            <div class="bios-form-actions">
+                <button type="submit" class="bios-button-primary bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-base">save</span>
+                    {% if object %}Actualizar{% else %}Crear{% endif %}
+                </button>
+                <a href="{% url 'batches:list' %}" class="bios-button-outline bios-form-button-full">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

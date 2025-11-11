@@ -8,7 +8,7 @@ class BatchManager(models.Manager):
         return self.filter(is_active=True)
     
     def by_user(self, user):
-        return self.filter(usuario=user)
+        return self.filter(usuario=user, is_active=True)
 
 
 class Batch(models.Model):
@@ -28,6 +28,12 @@ class Batch(models.Model):
         verbose_name=_("Dirección"),
         blank=True,
         help_text=_("Ubicación física del lote")
+    )
+    imagen = models.ImageField(
+        upload_to="lotes/%Y/%m/",
+        verbose_name=_("Imagen del lote"),
+        blank=True,
+        null=True
     )
     is_active = models.BooleanField(
         default=True,
@@ -51,10 +57,11 @@ class Batch(models.Model):
         indexes = [
             models.Index(fields=["usuario", "nombre"]),
             models.Index(fields=["is_active"]),
+            models.Index(fields=["-created_at"]),
         ]
 
     def __str__(self) -> str:
-        return f"{self.nombre} ({self.usuario.email})"
+        return f"{self.nombre}"
 
     def animal_count(self) -> int:
         return self.animal_set.count()
