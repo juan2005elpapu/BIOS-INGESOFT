@@ -36,7 +36,7 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # Application definition
 
 INSTALLED_APPS = [
-    "unfold",                 # <- antes del admin
+    "unfold",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "tailwind",
     "theme",
     "accounts",
-    "batches",
+    "batches.apps.BatchesConfig",  # <- Cambiar esta línea
     "animals",
     "tracking",
     "costs",
@@ -192,5 +192,26 @@ UNFOLD = {
     "SITE_HEADER": "Administración AgroManager",
     "SITE_SUBHEADER": "Panel ganadero",
     "SITE_SYMBOL": "agriculture",
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "batches": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
 }
 

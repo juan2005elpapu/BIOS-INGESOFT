@@ -5,6 +5,7 @@ from django.db.models import Q, Count
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from .forms import BatchForm
@@ -70,16 +71,10 @@ class BatchUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class BatchDeleteView(LoginRequiredMixin, DeleteView):
-    model = Batch
-    success_url = reverse_lazy("batches:list")
-
-    def get_queryset(self):
-        return Batch.objects.by_user(self.request.user)
-
-    def post(self, request, *args, **kwargs):
-        batch = self.get_object()
-        batch.is_active = False
-        batch.save()
-        messages.success(request, _("Lote eliminado exitosamente."))
-        return redirect(self.success_url)
+class BatchDeleteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        batch = get_object_or_404(Batch, pk=pk, usuario=request.user)
+        nombre_batch = batch.nombre
+        batch.delete()
+        messages.success(request, _('Lote "{}" eliminado exitosamente.').format(nombre_batch))
+        return redirect("batches:list")
