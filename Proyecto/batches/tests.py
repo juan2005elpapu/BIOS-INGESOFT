@@ -60,7 +60,7 @@ class BatchModelTests(TestCase):
         batch1 = Batch.objects.create(nombre="B Lote", usuario=self.user)
         batch2 = Batch.objects.create(nombre="A Lote", usuario=self.user)
         
-        batches = Batch.objects.filter(usuario=self.user)
+        batches = Batch.objects.filter(usuario=self.user).order_by("nombre")
         
         self.assertEqual(batches[0], batch2)
         self.assertEqual(batches[1], batch1)
