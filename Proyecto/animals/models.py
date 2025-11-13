@@ -7,6 +7,13 @@ class Animal(models.Model):
         ("F", "Hembra"),
     ]
     
+    codigo = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name="Código/Identificación",
+        blank=True,
+        null=True
+    )
     batch = models.ForeignKey(
         Batch,
         on_delete=models.CASCADE,
@@ -33,7 +40,9 @@ class Animal(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.especie} - {self.raza} ({self.get_sexo_display()})"
+        if self.codigo:
+            return f"{self.codigo} - {self.especie}"
+        return f"{self.especie}"
 
     class Meta:
         verbose_name = "Animal"

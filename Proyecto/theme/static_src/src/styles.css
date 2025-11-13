@@ -445,4 +445,13 @@
     .animal-form-grid {
         @apply grid gap-4 md:grid-cols-2;
     }
+
+    /* Badge de código para animales */
+    .animal-codigo-badge {
+        @apply inline-flex items-center gap-2 rounded-lg bg-emerald-500/15 px-3 py-1.5 mb-2;
+    }
+
+    .animal-codigo-badge .font-mono {
+        @apply text-sm text-emerald-300;
+    }
 }

@@ -28,6 +28,17 @@
             {% endif %}
 
             <div class="bios-field">
+                <label for="{{ form.codigo.id_for_label }}" class="bios-label">
+                    Código/Identificación <span class="text-red-400">*</span>
+                </label>
+                {{ form.codigo }}
+                {% if form.codigo.errors %}
+                <p class="bios-error-msg">{{ form.codigo.errors.0 }}</p>
+                {% endif %}
+                <p class="bios-help-text">Código único para identificar este animal (se convertirá a mayúsculas)</p>
+            </div>
+
+            <div class="bios-field">
                 <label for="{{ form.batch.id_for_label }}" class="bios-label">
                     Lote <span class="text-red-400">*</span>
                 </label>

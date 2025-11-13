@@ -25,7 +25,9 @@ class AnimalListView(LoginRequiredMixin, ListView):
         search_query = self.request.GET.get("search", "").strip()
         if search_query:
             queryset = queryset.filter(
-                Q(especie__icontains=search_query) | Q(raza__icontains=search_query)
+                Q(codigo__icontains=search_query) |
+                Q(especie__icontains=search_query) | 
+                Q(raza__icontains=search_query)
             )
         
         batch_filter = self.request.GET.get("batch", "").strip()
@@ -110,7 +112,7 @@ class AnimalDeleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         user_batches = Batch.objects.by_user(request.user)
         animal = get_object_or_404(Animal, pk=pk, batch__in=user_batches)
-        especie = animal.especie
+        codigo = animal.codigo
         animal.delete()
-        messages.success(request, f'Animal "{especie}" eliminado exitosamente')
+        messages.success(request, f'Animal "{codigo}" eliminado exitosamente')
         return redirect("animals:list")

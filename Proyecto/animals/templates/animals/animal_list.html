@@ -23,7 +23,7 @@
                     type="text"
                     name="search"
                     value="{{ search_query }}"
-                    placeholder="Buscar por especie o raza..."
+                    placeholder="Buscar por código, especie o raza..."
                     class="bios-input"
                 />
             </div>
@@ -65,6 +65,10 @@
             </div>
 
             <div class="batch-info">
+                <div class="animal-codigo-badge">
+                    <span class="material-symbols-outlined bios-icon-sm">tag</span>
+                    <span class="font-mono font-bold">{{ animal.codigo }}</span>
+                </div>
                 <h3 class="batch-name">{{ animal.especie }}</h3>
                 
                 <div class="animal-info-grid">

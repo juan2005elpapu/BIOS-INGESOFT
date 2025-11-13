@@ -6,8 +6,12 @@ from .models import Animal
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
-        fields = ["batch", "especie", "raza", "sexo", "fecha_de_nacimiento"]
+        fields = ["codigo", "batch", "especie", "raza", "sexo", "fecha_de_nacimiento"]
         widgets = {
+            "codigo": forms.TextInput(attrs={
+                "class": "bios-input",
+                "placeholder": "Ej: A001, BOV-123, etc."
+            }),
             "batch": forms.Select(attrs={
                 "class": "bios-select"
             }),
@@ -28,6 +32,7 @@ class AnimalForm(forms.ModelForm):
             }),
         }
         labels = {
+            "codigo": "Código/Identificación",
             "batch": "Lote",
             "especie": "Especie",
             "raza": "Raza",
@@ -47,6 +52,20 @@ class AnimalForm(forms.ModelForm):
         
         # Hacer raza opcional
         self.fields["raza"].required = False
+
+    def clean_codigo(self):
+        codigo = self.cleaned_data.get("codigo", "")
+        codigo = codigo.strip().upper()
+        
+        # Verificar si existe otro animal con el mismo código (excepto el actual en edición)
+        qs = Animal.objects.filter(codigo=codigo)
+        if self.instance.pk:
+            qs = qs.exclude(pk=self.instance.pk)
+        
+        if qs.exists():
+            raise forms.ValidationError("Ya existe un animal con este código.")
+        
+        return codigo
 
     def clean_especie(self):
         especie = self.cleaned_data.get("especie", "")
