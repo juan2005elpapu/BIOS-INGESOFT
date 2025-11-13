@@ -151,7 +151,7 @@
     }
 
     .batch-image-wrapper {
-        @apply aspect-[4/3] w-full overflow-hidden rounded-xl bg-slate-800;
+        @apply aspect-4/3 w-full overflow-hidden rounded-xl bg-slate-800;
     }
 
     .batch-image {
@@ -401,5 +401,48 @@
 
     .bios-icon-hidden {
         @apply hidden;
+    }
+
+    /* Estilos específicos para Animals */
+    .animal-card-header {
+        @apply flex items-center justify-between mb-2;
+    }
+
+    .animal-icon-wrapper {
+        @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/15;
+    }
+
+    .animal-icon {
+        @apply text-3xl text-blue-300;
+    }
+
+    .animal-sex-badge {
+        @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+    }
+
+    .animal-sex-badge--male,
+    .animal-sex-badge--macho {
+        @apply bg-blue-500/15 text-blue-300;
+    }
+
+    .animal-sex-badge--female,
+    .animal-sex-badge--hembra {
+        @apply bg-pink-500/15 text-pink-300;
+    }
+
+    .animal-info-grid {
+        @apply grid grid-cols-2 gap-2;
+    }
+
+    .animal-info-item {
+        @apply flex items-center gap-2;
+    }
+
+    .animal-info-text {
+        @apply text-xs text-slate-400 truncate;
+    }
+
+    .animal-form-grid {
+        @apply grid gap-4 md:grid-cols-2;
     }
 }

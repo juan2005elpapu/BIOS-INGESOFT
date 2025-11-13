@@ -1,41 +1,162 @@
 {% extends "basic.html" %}
 {% load static %}
+
+{% block topbar_title %}Gestión de Animales{% endblock %}
+
 {% block content %}
-<div class="bios-main">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 class="text-2xl font-bold text-white">Animals</h1>
-        <form method="get" class="flex gap-2 mt-4 md:mt-0">
-            <input type="text" name="q" placeholder="Search animals..." class="bios-input w-64" value="{{ request.GET.q }}">
-            <a href="{% url 'animals:add' %}" class="bios-button-primary">+ Add Animal</a>
+<div class="batch-container">
+    <div class="batch-header">
+        <div class="batch-title-section">
+            <h1 class="batch-title">Mis Animales</h1>
+            <p class="batch-subtitle">Administra tus animales de forma eficiente</p>
+        </div>
+        <a href="{% url 'animals:add' %}" class="bios-button-primary batch-header-button">
+            <span class="material-symbols-outlined bios-icon-base">add</span>
+            Agregar Animal
+        </a>
+    </div>
+
+    <div class="batch-search-card">
+        <form method="get" class="batch-search-form">
+            <div class="bios-search-container">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search_query }}"
+                    placeholder="Buscar por especie o raza..."
+                    class="bios-input"
+                />
+            </div>
+            <div class="bios-search-actions">
+                <select name="batch" class="bios-select">
+                    <option value="">Todos los lotes</option>
+                    {% for batch in user_batches %}
+                    <option value="{{ batch.id }}" {% if selected_batch == batch.id|stringformat:"s" %}selected{% endif %}>
+                        {{ batch.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <select name="sex" class="bios-select">
+                    <option value="">Todos los sexos</option>
+                    <option value="M" {% if selected_sex == "M" %}selected{% endif %}>Macho</option>
+                    <option value="F" {% if selected_sex == "F" %}selected{% endif %}>Hembra</option>
+                </select>
+                <button type="submit" class="bios-button-icon-only">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </div>
         </form>
     </div>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+    {% if animals %}
+    <div class="batch-grid">
         {% for animal in animals %}
-        <div class="bios-card flex flex-row items-center gap-4">
-            <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center">
-                <img src="{% static 'img/default-animal.png' %}" alt="Animal" class="object-cover w-full h-full">
-            </div>
-            <div class="flex-1">
-                <div class="font-semibold text-green-200">{{ animal.id }}</div>
-                <div class="text-slate-300 text-sm">
-                    {{ animal.especie }}, {{ animal.raza }}, {{ animal.sexo }}, {{ animal.fecha_de_nacimiento|date:"d/m/Y" }}
+        <div class="batch-card group">
+            <div class="animal-card-header">
+                <div class="animal-icon-wrapper">
+                    <span class="material-symbols-outlined animal-icon">pets</span>
+                </div>
+                <div class="animal-sex-badge animal-sex-badge--{{ animal.get_sexo_display|lower }}">
+                    <span class="material-symbols-outlined bios-icon-sm">
+                        {% if animal.sexo == "M" %}male{% else %}female{% endif %}
+                    </span>
+                    {{ animal.get_sexo_display }}
                 </div>
             </div>
-            <a href="#" class="ml-auto text-green-400">&gt;</a>
+
+            <div class="batch-info">
+                <h3 class="batch-name">{{ animal.especie }}</h3>
+                
+                <div class="animal-info-grid">
+                    {% if animal.raza %}
+                    <div class="animal-info-item">
+                        <span class="material-symbols-outlined bios-icon-sm text-slate-500">category</span>
+                        <span class="animal-info-text">{{ animal.raza }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="animal-info-item">
+                        <span class="material-symbols-outlined bios-icon-sm text-slate-500">hive</span>
+                        <span class="animal-info-text">{{ animal.batch.nombre }}</span>
+                    </div>
+
+                    <div class="animal-info-item">
+                        <span class="material-symbols-outlined bios-icon-sm text-slate-500">cake</span>
+                        <span class="animal-info-text">{{ animal.fecha_de_nacimiento|date:"d/m/Y" }}</span>
+                    </div>
+
+                    <div class="animal-info-item">
+                        <span class="material-symbols-outlined bios-icon-sm text-slate-500">calendar_today</span>
+                        <span class="animal-info-text">{{ animal.edad_display }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="batch-actions">
+                <a href="{% url 'animals:edit' animal.pk %}" class="bios-button-outline bios-batch-action-btn">
+                    <span class="material-symbols-outlined bios-icon-sm">edit</span>
+                    Editar
+                </a>
+                <form method="post" action="{% url 'animals:delete' animal.pk %}" class="bios-batch-action-form" onsubmit="return confirm('¿Eliminar este animal?')">
+                    {% csrf_token %}
+                    <button type="submit" class="bios-button-outline bios-button-delete bios-batch-action-btn">
+                        <span class="material-symbols-outlined bios-icon-sm">delete</span>
+                        Eliminar
+                    </button>
+                </form>
+            </div>
         </div>
-        {% empty %}
-        <div class="bios-card col-span-full text-center text-slate-400">No animals found.</div>
         {% endfor %}
     </div>
+
     {% if is_paginated %}
-    <div class="mt-6 flex justify-center">
+    <div class="batch-pagination">
         {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="bios-button-outline mr-2">Previous</a>
+        <div class="bios-pagination-nav">
+            <a href="?page=1&search={{ search_query }}&batch={{ selected_batch }}&sex={{ selected_sex }}" class="bios-button-outline">
+                <span class="material-symbols-outlined bios-icon-sm">first_page</span>
+                Primera
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&batch={{ selected_batch }}&sex={{ selected_sex }}" class="bios-button-outline">
+                <span class="material-symbols-outlined bios-icon-sm">chevron_left</span>
+                Anterior
+            </a>
+        </div>
         {% endif %}
-        <span class="bios-pagination-nav">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+        <div class="batch-pagination-info">
+            <span class="material-symbols-outlined bios-icon-sm">article</span>
+            Página <span class="bios-text-highlight">{{ page_obj.number }}</span> de <span class="bios-text-highlight">{{ page_obj.paginator.num_pages }}</span>
+        </div>
+
         {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="bios-button-outline ml-2">Next</a>
+        <div class="bios-pagination-nav">
+            <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&batch={{ selected_batch }}&sex={{ selected_sex }}" class="bios-button-outline">
+                Siguiente
+                <span class="material-symbols-outlined bios-icon-sm">chevron_right</span>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&batch={{ selected_batch }}&sex={{ selected_sex }}" class="bios-button-outline">
+                Última
+                <span class="material-symbols-outlined bios-icon-sm">last_page</span>
+            </a>
+        </div>
         {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="batch-empty-state">
+        <div class="batch-empty-icon-wrapper">
+            <span class="material-symbols-outlined bios-icon-lg">pets</span>
+        </div>
+        <h3 class="batch-empty-title">No hay animales registrados</h3>
+        <p class="batch-empty-description">
+            Comienza agregando animales a tus lotes para llevar un control detallado de tu ganado
+        </p>
+        <a href="{% url 'animals:add' %}" class="bios-button-primary">
+            <span class="material-symbols-outlined bios-icon-base">add</span>
+            Agregar primer animal
+        </a>
     </div>
     {% endif %}
 </div>

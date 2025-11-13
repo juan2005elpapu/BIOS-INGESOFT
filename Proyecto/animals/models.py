@@ -2,6 +2,11 @@ from django.db import models
 from batches.models import Batch
 
 class Animal(models.Model):
+    SEXO_CHOICES = [
+        ("M", "Macho"),
+        ("F", "Hembra"),
+    ]
+    
     batch = models.ForeignKey(
         Batch,
         on_delete=models.CASCADE,
@@ -14,20 +19,23 @@ class Animal(models.Model):
     )
     raza = models.CharField(
         max_length=30,
-        verbose_name="Raza"
+        verbose_name="Raza",
+        blank=True,
+        null=True
     )
     sexo = models.CharField(
-        max_length=10,
+        max_length=1,
+        choices=SEXO_CHOICES,
         verbose_name="Sexo"
     )
-    fecha_de_nacimiento = models.DateTimeField(
+    fecha_de_nacimiento = models.DateField(
         verbose_name="Fecha de nacimiento"
     )
 
     def __str__(self) -> str:
-        return f"{self.especie} - {self.raza} ({self.sexo})"
+        return f"{self.especie} - {self.raza} ({self.get_sexo_display()})"
 
     class Meta:
         verbose_name = "Animal"
         verbose_name_plural = "Animales"
-        ordering = ["fecha_de_nacimiento"]
+        ordering = ["-fecha_de_nacimiento"]

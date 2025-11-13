@@ -1,32 +1,99 @@
 {% extends "basic.html" %}
+{% load static %}
+
+{% block topbar_title %}{% if object %}Editar Animal{% else %}Agregar Animal{% endif %}{% endblock %}
+
 {% block content %}
-<div class="bios-main flex flex-col items-center justify-center">
-    <div class="bios-form-container w-full max-w-lg">
-        <h2 class="text-xl font-bold text-white mb-6">Add Animal</h2>
-        <form method="post" class="space-y-6">
+<div class="bios-form-container">
+    <div class="batch-header">
+        <div class="bios-form-header">
+            <div class="bios-card-icon">
+                <span class="material-symbols-outlined">pets</span>
+            </div>
+            <div>
+                <h1 class="batch-title">{% if object %}Editar Animal{% else %}Agregar Animal{% endif %}</h1>
+                <p class="batch-subtitle">{% if object %}Actualiza la información del animal{% else %}Ingresa los datos del nuevo animal{% endif %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bios-card">
+        <form method="post" class="bios-auth-form">
             {% csrf_token %}
-            {{ form.non_field_errors }}
+
+            {% if form.non_field_errors %}
+            <div class="bios-error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
             <div class="bios-field">
-                <label class="bios-label">Batch</label>
+                <label for="{{ form.batch.id_for_label }}" class="bios-label">
+                    Lote <span class="text-red-400">*</span>
+                </label>
                 {{ form.batch }}
+                {% if form.batch.errors %}
+                <p class="bios-error-msg">{{ form.batch.errors.0 }}</p>
+                {% endif %}
+                <p class="bios-help-text">Selecciona el lote al que pertenece este animal</p>
             </div>
-            <div class="bios-field">
-                <label class="bios-label">Species</label>
-                {{ form.especie }}
+
+            <div class="animal-form-grid">
+                <div class="bios-field">
+                    <label for="{{ form.especie.id_for_label }}" class="bios-label">
+                        Especie <span class="text-red-400">*</span>
+                    </label>
+                    {{ form.especie }}
+                    {% if form.especie.errors %}
+                    <p class="bios-error-msg">{{ form.especie.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="bios-field">
+                    <label for="{{ form.raza.id_for_label }}" class="bios-label">
+                        Raza
+                    </label>
+                    {{ form.raza }}
+                    {% if form.raza.errors %}
+                    <p class="bios-error-msg">{{ form.raza.errors.0 }}</p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="bios-field">
-                <label class="bios-label">Breed</label>
-                {{ form.raza }}
+
+            <div class="animal-form-grid">
+                <div class="bios-field">
+                    <label for="{{ form.sexo.id_for_label }}" class="bios-label">
+                        Sexo <span class="text-red-400">*</span>
+                    </label>
+                    {{ form.sexo }}
+                    {% if form.sexo.errors %}
+                    <p class="bios-error-msg">{{ form.sexo.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="bios-field">
+                    <label for="{{ form.fecha_de_nacimiento.id_for_label }}" class="bios-label">
+                        Fecha de Nacimiento <span class="text-red-400">*</span>
+                    </label>
+                    {{ form.fecha_de_nacimiento }}
+                    {% if form.fecha_de_nacimiento.errors %}
+                    <p class="bios-error-msg">{{ form.fecha_de_nacimiento.errors.0 }}</p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="bios-field">
-                <label class="bios-label">Sex</label>
-                {{ form.sexo }}
+
+            <div class="bios-auth-actions">
+                <button type="submit" class="bios-button-primary bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-base">
+                        {% if object %}check{% else %}add{% endif %}
+                    </span>
+                    {% if object %}Actualizar Animal{% else %}Agregar Animal{% endif %}
+                </button>
+                <a href="{% url 'animals:list' %}" class="bios-button-outline bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-base">arrow_back</span>
+                    Cancelar
+                </a>
             </div>
-            <div class="bios-field">
-                <label class="bios-label">Date of Birth</label>
-                {{ form.fecha_de_nacimiento }}
-            </div>
-            <button type="submit" class="bios-button-primary w-full">Add Animal</button>
         </form>
     </div>
 </div>
