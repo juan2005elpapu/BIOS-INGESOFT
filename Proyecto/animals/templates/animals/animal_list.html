@@ -1,0 +1,42 @@
+{% extends "basic.html" %}
+{% load static %}
+{% block content %}
+<div class="bios-main">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h1 class="text-2xl font-bold text-white">Animals</h1>
+        <form method="get" class="flex gap-2 mt-4 md:mt-0">
+            <input type="text" name="q" placeholder="Search animals..." class="bios-input w-64" value="{{ request.GET.q }}">
+            <a href="{% url 'animals:add' %}" class="bios-button-primary">+ Add Animal</a>
+        </form>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {% for animal in animals %}
+        <div class="bios-card flex flex-row items-center gap-4">
+            <div class="w-16 h-16 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center">
+                <img src="{% static 'img/default-animal.png' %}" alt="Animal" class="object-cover w-full h-full">
+            </div>
+            <div class="flex-1">
+                <div class="font-semibold text-green-200">{{ animal.id }}</div>
+                <div class="text-slate-300 text-sm">
+                    {{ animal.especie }}, {{ animal.raza }}, {{ animal.sexo }}, {{ animal.fecha_de_nacimiento|date:"d/m/Y" }}
+                </div>
+            </div>
+            <a href="#" class="ml-auto text-green-400">&gt;</a>
+        </div>
+        {% empty %}
+        <div class="bios-card col-span-full text-center text-slate-400">No animals found.</div>
+        {% endfor %}
+    </div>
+    {% if is_paginated %}
+    <div class="mt-6 flex justify-center">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="bios-button-outline mr-2">Previous</a>
+        {% endif %}
+        <span class="bios-pagination-nav">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="bios-button-outline ml-2">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
