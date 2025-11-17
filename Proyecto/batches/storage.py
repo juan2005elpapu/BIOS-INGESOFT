@@ -1,18 +1,16 @@
 import logging
-from io import BytesIO
-from typing import Optional
 
 from django.conf import settings
 from django.core.files.base import File
 from django.core.files.storage import Storage
-from supabase import create_client, Client
+from supabase import Client, create_client
 
 logger = logging.getLogger(__name__)
 
 
 class SupabaseStorage(Storage):
     def __init__(self):
-        self.client: Optional[Client] = None
+        self.client: Client | None = None
         self.bucket_name = settings.SUPABASE_BUCKET
         self._initialize_client()
 
@@ -39,13 +37,13 @@ class SupabaseStorage(Storage):
         try:
             content.seek(0)
             file_bytes = content.read()
-            
+
             self.client.storage.from_(self.bucket_name).upload(
                 path=name,
                 file=file_bytes,
                 file_options={"content-type": content.content_type or "application/octet-stream"}
             )
-            
+
             logger.info(f"File {name} uploaded to Supabase successfully")
             return name
         except Exception as e:

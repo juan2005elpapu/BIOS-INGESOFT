@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 class BatchManager(models.Manager):
     def active_batches(self):
         return self.filter(is_active=True)
-    
+
     def by_user(self, user):
         return self.filter(usuario=user, is_active=True)
 

@@ -1,12 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
-from django.db.models import Q, Count
-from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, UpdateView
 
 from .forms import BatchForm
 from .models import Batch
@@ -20,18 +19,18 @@ class BatchListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = Batch.objects.by_user(self.request.user)
-        
+
         search = self.request.GET.get("search", "").strip()
         if search:
             queryset = queryset.filter(
                 Q(nombre__icontains=search) | Q(direccion__icontains=search)
             )
-        
+
         order_by = self.request.GET.get("order", "-created_at")
         valid_orders = ["nombre", "-nombre", "created_at", "-created_at", "direccion", "-direccion"]
         if order_by in valid_orders:
             queryset = queryset.order_by(order_by)
-        
+
         return queryset
 
     def get_context_data(self, **kwargs):

@@ -1,12 +1,14 @@
 from django.db import models
+
 from batches.models import Batch
+
 
 class Animal(models.Model):
     SEXO_CHOICES = [
         ("M", "Macho"),
         ("F", "Hembra"),
     ]
-    
+
     codigo = models.CharField(
         max_length=50,
         unique=True,

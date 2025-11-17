@@ -1,5 +1,7 @@
 from django import forms
+
 from batches.models import Batch
+
 from .models import Animal
 
 
@@ -43,28 +45,28 @@ class AnimalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        
+
         if user:
             self.fields["batch"].queryset = Batch.objects.by_user(user)
-        
+
         # Agregar placeholder al select de sexo
         self.fields["sexo"].empty_label = "Selecciona el sexo"
-        
+
         # Hacer raza opcional
         self.fields["raza"].required = False
 
     def clean_codigo(self):
         codigo = self.cleaned_data.get("codigo", "")
         codigo = codigo.strip().upper()
-        
+
         # Verificar si existe otro animal con el mismo código (excepto el actual en edición)
         qs = Animal.objects.filter(codigo=codigo)
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
-        
+
         if qs.exists():
             raise forms.ValidationError("Ya existe un animal con este código.")
-        
+
         return codigo
 
     def clean_especie(self):

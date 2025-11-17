@@ -32,10 +32,10 @@ class BatchForm(forms.ModelForm):
         nombre = self.cleaned_data.get("nombre")
         if not nombre:
             return nombre
-        
+
         nombre = nombre.strip()
-        
+
         if len(nombre) < 3:
             raise forms.ValidationError(_("El nombre debe tener al menos 3 caracteres."))
-        
+
         return nombre

@@ -14,7 +14,7 @@ class UserModelTests(TestCase):
             email="testuser@example.com",
             password="testpass123"
         )
-        
+
         self.assertEqual(user.email, "testuser@example.com")
         self.assertTrue(user.check_password("testpass123"))
         self.assertTrue(user.is_active)
@@ -26,7 +26,7 @@ class UserModelTests(TestCase):
             email="user@example.com",
             password="pass123"
         )
-        
+
         self.assertEqual(str(user), "user@example.com")
 
 
@@ -43,7 +43,7 @@ class EmailAuthenticationFormTests(TestCase):
             "email": "test@example.com",
             "password": "correctpass"
         })
-        
+
         self.assertTrue(form.is_valid())
         self.assertEqual(form.get_user(), self.user)
 
@@ -52,7 +52,7 @@ class EmailAuthenticationFormTests(TestCase):
             "email": "TEST@EXAMPLE.COM",
             "password": "correctpass"
         })
-        
+
         self.assertTrue(form.is_valid())
         self.assertEqual(form.get_user(), self.user)
 
@@ -61,7 +61,7 @@ class EmailAuthenticationFormTests(TestCase):
             "email": "nonexistent@example.com",
             "password": "somepass"
         })
-        
+
         self.assertFalse(form.is_valid())
         self.assertIn("Correo o contraseña no válidos.", form.non_field_errors())
 
@@ -70,7 +70,7 @@ class EmailAuthenticationFormTests(TestCase):
             "email": "test@example.com",
             "password": "wrongpass"
         })
-        
+
         self.assertFalse(form.is_valid())
         self.assertIn("Correo o contraseña no válidos.", form.non_field_errors())
 
@@ -79,7 +79,7 @@ class EmailAuthenticationFormTests(TestCase):
             "email": "",
             "password": ""
         })
-        
+
         self.assertFalse(form.is_valid())
         self.assertIn("email", form.errors)
         self.assertIn("password", form.errors)
@@ -92,10 +92,10 @@ class SignUpFormTests(TestCase):
             "password1": "securepass123",
             "password2": "securepass123"
         })
-        
+
         self.assertTrue(form.is_valid())
         user = form.save()
-        
+
         self.assertEqual(user.email, "newuser@example.com")
         self.assertTrue(user.check_password("securepass123"))
 
@@ -105,13 +105,13 @@ class SignUpFormTests(TestCase):
             email="existing@example.com",
             password="pass123"
         )
-        
+
         form = SignUpForm(data={
             "email": "existing@example.com",
             "password1": "newpass123",
             "password2": "newpass123"
         })
-        
+
         self.assertFalse(form.is_valid())
         self.assertIn("Este correo ya está registrado.", form.errors["email"])
 
@@ -121,13 +121,13 @@ class SignUpFormTests(TestCase):
             email="existing@example.com",
             password="pass123"
         )
-        
+
         form = SignUpForm(data={
             "email": "EXISTING@EXAMPLE.COM",
             "password1": "newpass123",
             "password2": "newpass123"
         })
-        
+
         self.assertFalse(form.is_valid())
         self.assertIn("Este correo ya está registrado.", form.errors["email"])
 
@@ -137,7 +137,7 @@ class SignUpFormTests(TestCase):
             "password1": "password123",
             "password2": "different123"
         })
-        
+
         self.assertFalse(form.is_valid())
         self.assertIn("Las contraseñas no coinciden.", form.non_field_errors())
 
@@ -147,7 +147,7 @@ class SignUpFormTests(TestCase):
             "password1": "",
             "password2": ""
         })
-        
+
         self.assertFalse(form.is_valid())
         self.assertIn("password1", form.errors)
         self.assertIn("password2", form.errors)
@@ -164,7 +164,7 @@ class LoginViewTests(TestCase):
 
     def test_login_page_loads(self):
         response = self.client.get(self.url)
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/login.html")
 
@@ -173,7 +173,7 @@ class LoginViewTests(TestCase):
             "email": "test@example.com",
             "password": "testpass123"
         })
-        
+
         self.assertRedirects(response, reverse("dashboard:home"))
         self.assertTrue(response.wsgi_request.user.is_authenticated)
 
@@ -183,7 +183,7 @@ class LoginViewTests(TestCase):
             "email": "test@example.com",
             "password": "testpass123"
         })
-        
+
         self.assertRedirects(response, next_url)
 
     def test_failed_login(self):
@@ -191,7 +191,7 @@ class LoginViewTests(TestCase):
             "email": "test@example.com",
             "password": "wrongpass"
         })
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.wsgi_request.user.is_authenticated)
 
@@ -202,7 +202,7 @@ class SignUpViewTests(TestCase):
 
     def test_signup_page_loads(self):
         response = self.client.get(self.url)
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/signup.html")
 
@@ -212,7 +212,7 @@ class SignUpViewTests(TestCase):
             "password1": "securepass123",
             "password2": "securepass123"
         })
-        
+
         self.assertRedirects(response, reverse("accounts:login"))
         self.assertTrue(User.objects.filter(email="newuser@example.com").exists())
 
@@ -222,13 +222,13 @@ class SignUpViewTests(TestCase):
             email="existing@example.com",
             password="pass123"
         )
-        
+
         response = self.client.post(self.url, {
             "email": "existing@example.com",
             "password1": "newpass123",
             "password2": "newpass123"
         })
-        
+
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
         self.assertIn("Este correo ya está registrado.", form.errors["email"])
@@ -246,6 +246,6 @@ class LogoutViewTests(TestCase):
     def test_logout_redirects_to_login(self):
         self.client.login(username="test@example.com", password="testpass123")
         response = self.client.post(self.url)
-        
+
         self.assertRedirects(response, reverse("accounts:login"))
         self.assertFalse(response.wsgi_request.user.is_authenticated)

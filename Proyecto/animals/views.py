@@ -1,13 +1,15 @@
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, ListView
-from datetime import date
+from django.views.generic import CreateView, ListView, UpdateView
 
 from batches.models import Batch
+
 from .forms import AnimalForm
 from .models import Animal
 
@@ -21,23 +23,23 @@ class AnimalListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user_batches = Batch.objects.by_user(self.request.user)
         queryset = Animal.objects.filter(batch__in=user_batches).select_related("batch")
-        
+
         search_query = self.request.GET.get("search", "").strip()
         if search_query:
             queryset = queryset.filter(
                 Q(codigo__icontains=search_query) |
-                Q(especie__icontains=search_query) | 
+                Q(especie__icontains=search_query) |
                 Q(raza__icontains=search_query)
             )
-        
+
         batch_filter = self.request.GET.get("batch", "").strip()
         if batch_filter:
             queryset = queryset.filter(batch_id=batch_filter)
-        
+
         sex_filter = self.request.GET.get("sex", "").strip()
         if sex_filter:
             queryset = queryset.filter(sexo=sex_filter)
-        
+
         return queryset.order_by("-id")
 
     def get_context_data(self, **kwargs):
@@ -46,7 +48,7 @@ class AnimalListView(LoginRequiredMixin, ListView):
         context["selected_batch"] = self.request.GET.get("batch", "")
         context["selected_sex"] = self.request.GET.get("sex", "")
         context["user_batches"] = Batch.objects.by_user(self.request.user)
-        
+
         for animal in context["animals"]:
             if animal.fecha_de_nacimiento:
                 age = (date.today() - animal.fecha_de_nacimiento).days
@@ -60,7 +62,7 @@ class AnimalListView(LoginRequiredMixin, ListView):
                     animal.edad_display = f"{age} día{'s' if age != 1 else ''}"
             else:
                 animal.edad_display = "N/A"
-        
+
         return context
 
 

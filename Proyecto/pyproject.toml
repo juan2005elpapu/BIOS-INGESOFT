@@ -1,0 +1,17 @@
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+extend-include = ["*.py", "*.pyi"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP", "DJ"]
+ignore = ["DJ001", "DJ008"]
+fixable = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"*/migrations/*.py" = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
