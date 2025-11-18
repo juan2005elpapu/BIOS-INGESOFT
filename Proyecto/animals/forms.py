@@ -1,4 +1,6 @@
 from django import forms
+from datetime import date
+from django.core.exceptions import ValidationError
 
 from batches.models import Batch
 
@@ -76,3 +78,9 @@ class AnimalForm(forms.ModelForm):
     def clean_raza(self):
         raza = self.cleaned_data.get("raza", "")
         return raza.strip() if raza else None
+
+    def clean_fecha_de_nacimiento(self):
+        fecha = self.cleaned_data.get("fecha_de_nacimiento")
+        if fecha and fecha > date.today():
+            raise ValidationError("La fecha de nacimiento no puede ser futura.")
+        return fecha
