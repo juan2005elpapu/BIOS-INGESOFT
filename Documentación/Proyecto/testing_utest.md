@@ -1,6 +1,6 @@
 # Testing Unitario — Proyecto BIOS-INGESOFT
 
-Autor del documento: <Nombre del equipo / responsable>  
+Autor del documento: Grupo BIOS / Oscar Aguas  
 Ruta final requerida (PDF): Documentación/Proyecto/testing_utest.pdf
 
 ---
