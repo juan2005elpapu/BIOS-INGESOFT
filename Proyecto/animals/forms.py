@@ -51,17 +51,21 @@ class AnimalForm(forms.ModelForm):
         if user:
             self.fields["batch"].queryset = Batch.objects.by_user(user)
 
-        # Agregar placeholder al select de sexo
         self.fields["sexo"].empty_label = "Selecciona el sexo"
-
-        # Hacer raza opcional
         self.fields["raza"].required = False
+        self.fields["codigo"].required = False
 
     def clean_codigo(self):
         codigo = self.cleaned_data.get("codigo", "")
+        
+        if not codigo:
+            return ""
+        
         codigo = codigo.strip().upper()
+        
+        if not codigo:
+            return ""
 
-        # Verificar si existe otro animal con el mismo código (excepto el actual en edición)
         qs = Animal.objects.filter(codigo=codigo)
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)
