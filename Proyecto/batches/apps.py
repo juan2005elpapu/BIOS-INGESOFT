@@ -6,4 +6,4 @@ class BatchesConfig(AppConfig):
     name = "batches"
 
     def ready(self):
-        pass
+        from . import signals 
