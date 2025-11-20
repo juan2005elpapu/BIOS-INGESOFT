@@ -1,0 +1,21 @@
+{% extends "basic.html" %}
+{% block title %}Eliminar {{ entity_label }}{% endblock %}
+{% block content %}
+<div class="bios-main">
+    <div class="tracking-container">
+        <div class="tracking-delete-card">
+            <p class="tracking-eyebrow">Confirmación</p>
+            <h1 class="batch-title">Eliminar {{ entity_label }}</h1>
+            <p class="batch-subtitle">Esta acción no se puede deshacer.</p>
+            <p class="mt-6 text-slate-300">¿Seguro que deseas eliminar <span class="bios-text-highlight">{{ object }}</span>?</p>
+            <form method="post" class="mt-8 space-y-4">
+                {% csrf_token %}
+                <div class="bios-form-actions">
+                    <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">Cancelar</a>
+                    <button type="submit" class="bios-button-outline bios-button-delete bios-form-button-full">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

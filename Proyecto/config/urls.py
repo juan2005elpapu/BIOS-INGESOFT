@@ -26,6 +26,7 @@ urlpatterns = [
     path("dashboard/", include("dashboard.urls")),
     path("lotes/", include("batches.urls")),
     path("animals/", include("animals.urls")),
+    path("tracking/", include("tracking.urls")),
     path("", lambda request: redirect("dashboard:home")),
 ]
 

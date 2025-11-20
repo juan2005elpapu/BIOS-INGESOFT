@@ -1,0 +1,44 @@
+{% extends "basic.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="bios-main">
+    <div class="bios-form-container">
+        <div class="bios-card space-y-6">
+            <div class="bios-form-header">
+                <div class="batch-title-section">
+                    <p class="tracking-eyebrow">{{ subtitle }}</p>
+                    <h1 class="batch-title">{{ title }}</h1>
+                </div>
+            </div>
+            <form method="post" class="space-y-6" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="bios-error">
+                        {% for error in form.non_field_errors %}
+                            <p class="bios-error-msg">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="animal-form-grid">
+                    {% for field in form %}
+                        <div class="bios-field">
+                            <label for="{{ field.id_for_label }}" class="bios-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="bios-help-text">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p class="bios-error-msg">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="bios-form-actions">
+                    <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">Cancelar</a>
+                    <button type="submit" class="bios-button-primary bios-form-button-full">{{ action_label }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

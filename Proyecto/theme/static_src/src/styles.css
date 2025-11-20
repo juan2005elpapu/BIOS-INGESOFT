@@ -454,4 +454,101 @@
     .animal-codigo-badge .font-mono {
         @apply text-sm text-emerald-300;
     }
+
+    /* ...existing code... */
+    .tracking-container {
+        @apply mx-auto w-full max-w-6xl space-y-8;
+    }
+
+    .tracking-header {
+        @apply flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+    }
+
+    .tracking-eyebrow {
+        @apply text-xs font-semibold uppercase tracking-[0.3em] text-green-300/70;
+    }
+
+    .tracking-filter-card {
+        @apply rounded-2xl bg-slate-900 px-5 py-4 shadow-xl ring-1 ring-slate-800;
+    }
+
+    .tracking-filter-form {
+        @apply grid gap-4 md:grid-cols-4 md:items-end;
+    }
+
+    .tracking-filter-actions {
+        @apply flex flex-col gap-3 sm:flex-row;
+    }
+
+    .tracking-table-wrapper {
+        @apply overflow-x-auto rounded-2xl bg-slate-900 shadow-xl ring-1 ring-slate-800;
+    }
+
+    .tracking-table {
+        @apply min-w-full divide-y divide-slate-800;
+    }
+
+    .tracking-table th {
+        @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400;
+    }
+
+    .tracking-table td {
+        @apply px-4 py-4 text-sm text-slate-200 align-middle;
+    }
+
+    .tracking-row {
+        @apply border-b border-slate-800 last:border-0;
+    }
+
+    .tracking-badge {
+        @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold;
+    }
+
+    .tracking-badge--peso {
+        @apply bg-blue-500/10 text-blue-200;
+    }
+
+    .tracking-badge--produccion {
+        @apply bg-emerald-500/10 text-emerald-200;
+    }
+
+    .tracking-empty-state {
+        @apply rounded-2xl bg-slate-900 py-16 text-center shadow-xl ring-1 ring-slate-800;
+    }
+
+    .tracking-stats-grid {
+        @apply grid gap-4 md:grid-cols-3;
+    }
+
+    .tracking-stat-card {
+        @apply rounded-2xl bg-slate-900 px-5 py-4 shadow ring-1 ring-slate-800;
+    }
+
+    .tracking-delete-card {
+        @apply mx-auto w-full max-w-2xl rounded-2xl bg-slate-900 px-6 py-8 text-center shadow-xl ring-1 ring-slate-800;
+    }
+
+    .tracking-tabs {
+        @apply flex overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 text-sm font-semibold text-slate-400;
+    }
+
+    .tracking-tab {
+        @apply flex-1 px-4 py-3 text-center transition hover:text-white;
+    }
+
+    .tracking-tab--active {
+        @apply bg-green-500/20 text-white;
+    }
+
+    .bios-input[type="date"]::-webkit-calendar-picker-indicator,
+    .bios-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) brightness(1.4);
+        opacity: 0.85;
+        cursor: pointer;
+    }
+
+    .bios-input[type="date"]:hover::-webkit-calendar-picker-indicator,
+    .bios-input[type="datetime-local"]:hover::-webkit-calendar-picker-indicator {
+        opacity: 1;
+    }
 }
