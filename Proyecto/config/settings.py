@@ -16,6 +16,8 @@ from pathlib import Path
 
 import dj_database_url
 from dotenv import load_dotenv
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -192,6 +194,60 @@ UNFOLD = {
     "SITE_HEADER": "Administración AgroManager",
     "SITE_SUBHEADER": "Panel ganadero",
     "SITE_SYMBOL": "agriculture",
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": _("Usuarios"),
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Usuarios"),
+                        "icon": "account_circle",
+                        "link": reverse_lazy("admin:auth_user_changelist"),
+                    },
+                    {
+                        "title": _("Grupos"),
+                        "icon": "group",
+                        "link": reverse_lazy("admin:auth_group_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Inventario"),
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Lotes"),
+                        "icon": "warehouse",
+                        "link": reverse_lazy("admin:batches_batch_changelist"),
+                    },
+                    {
+                        "title": _("Animales"),
+                        "icon": "pets",
+                        "link": reverse_lazy("admin:animals_animal_changelist"),
+                    },
+                ],
+            },
+            {
+                "title": _("Tracking"),
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Registros de peso"),
+                        "icon": "monitor_weight",
+                        "link": reverse_lazy("admin:tracking_peso_changelist"),
+                    },
+                    {
+                        "title": _("Registros de producción"),
+                        "icon": "trending_up",
+                        "link": reverse_lazy("admin:tracking_produccion_changelist"),
+                    },
+                ],
+            },
+        ],
+    },
 }
 
 LOGGING = {
