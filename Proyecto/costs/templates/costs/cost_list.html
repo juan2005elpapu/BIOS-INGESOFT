@@ -1,0 +1,217 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block topbar_title %}Costos{% endblock %}
+
+{% block content %}
+<style>
+@media (max-width: 900px) {
+    .cost-table thead {
+        display: none;
+    }
+    .cost-table table,
+    .cost-table tbody,
+    .cost-table tr,
+    .cost-table td {
+        display: block;
+        width: 100%;
+    }
+    .cost-table tr {
+        border: 1px solid #1f2937;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: #0f172a;
+    }
+    .cost-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 4px;
+    }
+    .cost-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #9ca3af;
+        flex: 0 0 auto;
+    }
+    .cost-actions {
+        justify-content: center !important;
+    }
+}
+</style>
+<div class="batch-container">
+    <div class="batch-header">
+        <div class="batch-title-section">
+            <p class="tracking-eyebrow">Finanzas - Costos</p>
+            <h1 class="batch-title">Control de costos</h1>
+            <p class="batch-subtitle">Visualiza y administra los gastos de tus lotes.</p>
+        </div>
+        <a href="{% url 'costs:add' %}" class="bios-button-primary batch-header-button">
+            <span class="material-symbols-outlined bios-icon-base">add</span>
+            Registrar costo
+        </a>
+    </div>
+
+    <div class="tracking-stats-grid">
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Registros</p>
+            <p class="text-2xl font-semibold text-white">{{ stats.total }}</p>
+        </div>
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Gasto total</p>
+            <p class="text-2xl font-semibold text-white">
+                {% if stats.sum %}
+                    $ {{ stats.sum|floatformat:2 }}
+                {% else %}
+                    $ 0.00
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="batch-search-card" style="display:flex; justify-content:flex-end;">
+        <form class="batch-search-form" style="width:auto;">
+            <div class="bios-search-container" style="flex: 1 1 260px;">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ filters.search }}"
+                    placeholder="Buscar por concepto o notas..."
+                    class="bios-input"
+                />
+            </div>
+            <div class="bios-search-actions cost-filters" style="flex-wrap: wrap; gap: 0.75rem;">
+                <select name="batch" class="bios-select">
+                    <option value="">Todos los lotes</option>
+                    {% for lote in batches %}
+                    <option value="{{ lote.id }}" {% if filters.batch == lote.id|stringformat:"s" %}selected{% endif %}>
+                        {{ lote.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select name="animal" class="bios-select">
+                    <option value="">Todos los animales</option>
+                    {% for animal in animals %}
+                    <option value="{{ animal.id }}" {% if filters.animal == animal.id|stringformat:"s" %}selected{% endif %}>
+                        {{ animal.codigo|default:animal.especie }} - {{ animal.batch.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <select name="tipo" class="bios-select">
+                    <option value="">Todos los tipos</option>
+                    {% for value, label in cost_types %}
+                    <option value="{{ value }}" {% if filters.tipo == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <input type="date" name="start" value="{{ filters.start }}" class="bios-input" />
+                <input type="date" name="end" value="{{ filters.end }}" class="bios-input" />
+
+                <button type="submit" class="bios-button-icon-only" title="Filtrar">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if costs %}
+    <div class="bios-card overflow-x-auto cost-table">
+        <table class="min-w-full">
+            <thead>
+                <tr class="text-left text-sm text-slate-400">
+                    <th class="py-2 px-3">Concepto</th>
+                    <th class="py-2 px-3">Monto</th>
+                    <th class="py-2 px-3">Fecha</th>
+                    <th class="py-2 px-3">Lote</th>
+                    <th class="py-2 px-3">Animal</th>
+                    <th class="py-2 px-3">Tipo</th>
+                    <th class="py-2 px-3 text-right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cost in costs %}
+                <tr class="border-t border-slate-800 text-sm">
+                    <td class="py-2 px-3 font-semibold text-white" data-label="Concepto">{{ cost.concepto }}</td>
+                    <td class="py-2 px-3" data-label="Monto">$ {{ cost.monto|floatformat:2 }}</td>
+                    <td class="py-2 px-3" data-label="Fecha">{{ cost.fecha|date:"d/m/Y" }}</td>
+                    <td class="py-2 px-3" data-label="Lote">{{ cost.batch.nombre }}</td>
+                    <td class="py-2 px-3" data-label="Animal">
+                        {% if cost.animal %}
+                            {{ cost.animal.codigo|default:cost.animal.especie }}
+                        {% else %}
+                            General
+                        {% endif %}
+                    </td>
+                    <td class="py-2 px-3" data-label="Tipo">{{ cost.get_tipo_display }}</td>
+                    <td class="py-2 px-3 text-right" data-label="Acciones">
+                        <div class="flex items-center justify-center gap-3 cost-actions" style="gap: 0.75rem; justify-content: center;">
+                            <a href="{% url 'costs:edit' cost.id %}" class="bios-button-secondary bios-button-small">
+                                <span class="material-symbols-outlined bios-icon-sm" style="font-size:16px; line-height:16px;">edit</span>
+                                Editar
+                            </a>
+                            <form method="post" action="{% url 'costs:delete' cost.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="bios-button-danger bios-button-small" onclick="return confirm('Seguro que deseas eliminar este costo?');">
+                                    <span class="material-symbols-outlined bios-icon-sm" style="font-size:16px; line-height:16px;">delete</span>
+                                    Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if is_paginated %}
+    <div class="batch-pagination">
+        {% if page_obj.has_previous %}
+        <div class="bios-pagination-nav">
+            <a href="?page=1{% if filters_query %}&{{ filters_query }}{% endif %}" class="bios-button-outline">
+                <span class="material-symbols-outlined bios-icon-sm">first_page</span>
+                Primera
+            </a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if filters_query %}&{{ filters_query }}{% endif %}" class="bios-button-outline">
+                <span class="material-symbols-outlined bios-icon-sm">chevron_left</span>
+                Anterior
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="batch-pagination-info">
+            <span class="material-symbols-outlined bios-icon-sm">article</span>
+            Pagina <span class="bios-text-highlight">{{ page_obj.number }}</span> de <span class="bios-text-highlight">{{ page_obj.paginator.num_pages }}</span>
+        </div>
+
+        {% if page_obj.has_next %}
+        <div class="bios-pagination-nav">
+            <a href="?page={{ page_obj.next_page_number }}{% if filters_query %}&{{ filters_query }}{% endif %}" class="bios-button-outline">
+                Siguiente
+                <span class="material-symbols-outlined bios-icon-sm">chevron_right</span>
+            </a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if filters_query %}&{{ filters_query }}{% endif %}" class="bios-button-outline">
+                Ultima
+                <span class="material-symbols-outlined bios-icon-sm">last_page</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="bios-card bios-empty-state">
+        <div class="bios-card-icon">
+            <span class="material-symbols-outlined">request_quote</span>
+        </div>
+        <h3 class="batch-title">Sin costos registrados</h3>
+        <p class="batch-subtitle">Cuando registres gastos de tus lotes apareceran aqui.</p>
+        <a href="{% url 'costs:add' %}" class="bios-button-primary">Registrar el primero</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
