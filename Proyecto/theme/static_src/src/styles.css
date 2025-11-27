@@ -244,11 +244,11 @@
     }
 
     .bios-field {
-        @apply space-y-2;
+        @apply flex flex-col gap-2;
     }
 
     .bios-label {
-        @apply text-sm font-medium text-slate-200;
+        @apply block text-sm font-medium text-slate-200;
     }
 
     .bios-input {
@@ -492,6 +492,10 @@
         @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400;
     }
 
+    .tracking-table th.tracking-table-actions-col {
+        @apply text-center;
+    }
+
     .tracking-table td {
         @apply px-4 py-4 text-sm text-slate-200 align-middle;
     }
@@ -541,7 +545,7 @@
     }
 
     .tracking-table-actions-col {
-        @apply w-48 text-center;
+        @apply w-48;
     }
 
     .tracking-table-actions-cell {
