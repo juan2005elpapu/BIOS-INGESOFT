@@ -94,16 +94,16 @@
             </div>
 
             <div class="bios-auth-actions">
-                <button type="submit" class="bios-button-primary bios-form-button-full">
-                    <span class="material-symbols-outlined bios-icon-base">
-                        {% if object %}check{% else %}add{% endif %}
-                    </span>
-                    {% if object %}Actualizar Animal{% else %}Agregar Animal{% endif %}
-                </button>
                 <a href="{% url 'animals:list' %}" class="bios-button-outline bios-form-button-full">
                     <span class="material-symbols-outlined bios-icon-base">arrow_back</span>
                     Cancelar
                 </a>
+                <button type="submit" class="bios-button-primary bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-base">
+                        {% if object %}check{% else %}save{% endif %}
+                    </span>
+                    {% if object %}Actualizar Animal{% else %}Agregar Animal{% endif %}
+                </button>
             </div>
         </form>
     </div>

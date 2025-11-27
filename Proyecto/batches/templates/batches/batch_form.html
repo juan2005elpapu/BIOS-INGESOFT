@@ -62,13 +62,16 @@
             </div>
 
             <div class="bios-form-actions">
-                <button type="submit" class="bios-button-primary bios-form-button-full">
-                    <span class="material-symbols-outlined bios-icon-base">save</span>
-                    {% if object %}Actualizar{% else %}Crear{% endif %}
-                </button>
                 <a href="{% url 'batches:list' %}" class="bios-button-outline bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-sm">arrow_back</span>
                     Cancelar
                 </a>
+                <button type="submit" class="bios-button-primary bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-base">
+                        {% if object %}check{% else %}save{% endif %}
+                    </span>
+                    {% if object %}Actualizar{% else %}Crear{% endif %}
+                </button>
             </div>
         </form>
     </div>

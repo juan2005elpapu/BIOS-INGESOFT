@@ -27,13 +27,12 @@
             </div>
             {% endif %}
 
-            <div class="bios-form-grid-2">
+            <div class="grid gap-4 md:grid-cols-2">
                 <div class="bios-field">
                     <label for="{{ form.batch.id_for_label }}" class="bios-label">Lote *</label>
                     {{ form.batch }}
                     {% if form.batch.errors %}<p class="bios-error-msg">{{ form.batch.errors.0 }}</p>{% endif %}
                 </div>
-
                 <div class="bios-field">
                     <label for="{{ form.animal.id_for_label }}" class="bios-label">Animal (opcional)</label>
                     {{ form.animal }}
@@ -42,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="bios-form-grid-2">
+            <div class="grid gap-4 md:grid-cols-2">
                 <div class="bios-field">
                     <label for="{{ form.tipo.id_for_label }}" class="bios-label">Tipo *</label>
                     {{ form.tipo }}
@@ -55,29 +54,34 @@
                 </div>
             </div>
 
-            <div class="bios-field">
-                <label for="{{ form.concepto.id_for_label }}" class="bios-label">Concepto *</label>
-                {{ form.concepto }}
-                {% if form.concepto.errors %}<p class="bios-error-msg">{{ form.concepto.errors.0 }}</p>{% endif %}
-            </div>
-
-            <div class="bios-form-grid-2">
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="bios-field">
+                    <label for="{{ form.concepto.id_for_label }}" class="bios-label">Concepto *</label>
+                    {{ form.concepto }}
+                    {% if form.concepto.errors %}<p class="bios-error-msg">{{ form.concepto.errors.0 }}</p>{% endif %}
+                </div>
                 <div class="bios-field">
                     <label for="{{ form.monto.id_for_label }}" class="bios-label">Monto *</label>
                     {{ form.monto }}
                     {% if form.monto.errors %}<p class="bios-error-msg">{{ form.monto.errors.0 }}</p>{% endif %}
                 </div>
-                <div class="bios-field">
-                    <label for="{{ form.notas.id_for_label }}" class="bios-label">Notas</label>
-                    {{ form.notas }}
-                    {% if form.notas.errors %}<p class="bios-error-msg">{{ form.notas.errors.0 }}</p>{% endif %}
-                </div>
+            </div>
+
+            <div class="bios-field">
+                <label for="{{ form.notas.id_for_label }}" class="bios-label">Notas</label>
+                {{ form.notas }}
+                {% if form.notas.errors %}<p class="bios-error-msg">{{ form.notas.errors.0 }}</p>{% endif %}
             </div>
 
             <div class="bios-form-actions">
-                <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">Cancelar</a>
+                <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-sm">arrow_back</span>
+                    Cancelar
+                </a>
                 <button type="submit" class="bios-button-primary bios-form-button-full">
-                    <span class="material-symbols-outlined bios-icon-sm">save</span>
+                    <span class="material-symbols-outlined bios-icon-sm">
+                        {% if object %}check{% else %}save{% endif %}
+                    </span>
                     {{ action_label }}
                 </button>
             </div>

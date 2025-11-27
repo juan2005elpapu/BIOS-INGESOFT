@@ -51,7 +51,7 @@
         <form method="get" class="tracking-filter-form" data-tracking-filter-form>
             <div>
                 <label class="bios-label">Lote</label>
-                <select name="batch" class="bios-select w-full" data-filter-lot>
+                <select name="batch" class="bios-select" data-filter-lot>
                     <option value="">Todos</option>
                     {% for lote in batches %}
                         <option value="{{ lote.id }}" {% if filters.batch == lote.id|stringformat:"s" %}selected{% endif %}>
@@ -63,7 +63,7 @@
             <div>
                 <label class="bios-label">Animal</label>
                 <select name="animal"
-                        class="bios-select w-full"
+                        class="bios-select"
                         data-filter-animal
                         data-selected="{{ filters.animal }}"
                         {% if not filters.batch %}disabled{% endif %}>
