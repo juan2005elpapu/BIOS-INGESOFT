@@ -80,8 +80,14 @@ class CostListView(CostQuerysetMixin, ListView):
 
         return queryset.order_by("-fecha", "-id")
 
-    def get_context_data(self, **kwargs: Any):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        queryset = self.object_list
+        stats = {
+            "total": queryset.count(),
+            "sum": queryset.aggregate(total=Sum("monto"))["total"],
+            "last_date": queryset.order_by("-fecha").values_list("fecha", flat=True).first(),
+        }
         filters = {
             "search": self.request.GET.get("search", ""),
             "batch": self.request.GET.get("batch", ""),
@@ -90,7 +96,6 @@ class CostListView(CostQuerysetMixin, ListView):
             "start": self.request.GET.get("start", ""),
             "end": self.request.GET.get("end", ""),
         }
-        stats_queryset = self.object_list
         context.update(
             {
                 "filters": filters,
@@ -98,10 +103,7 @@ class CostListView(CostQuerysetMixin, ListView):
                 "batches": self.get_user_batches(),
                 "animals": self.get_user_animals(),
                 "cost_types": Cost.CostType.choices,
-                "stats": {
-                    "total": stats_queryset.count(),
-                    "sum": stats_queryset.aggregate(total=Sum("monto"))["total"],
-                },
+                "stats": stats,
             }
         )
         return context

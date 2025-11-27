@@ -27,7 +27,7 @@
             </div>
             {% endif %}
 
-            <div class="form-grid-2">
+            <div class="bios-form-grid-2">
                 <div class="bios-field">
                     <label for="{{ form.batch.id_for_label }}" class="bios-label">Lote *</label>
                     {{ form.batch }}
@@ -38,11 +38,11 @@
                     <label for="{{ form.animal.id_for_label }}" class="bios-label">Animal (opcional)</label>
                     {{ form.animal }}
                     {% if form.animal.errors %}<p class="bios-error-msg">{{ form.animal.errors.0 }}</p>{% endif %}
-                    <p class="bios-help-text">Si no seleccionas un animal, el costo se asociara solo al lote.</p>
+                    <p class="bios-help-text">Si no seleccionas un animal, el costo se asociará solo al lote.</p>
                 </div>
             </div>
 
-            <div class="form-grid-2">
+            <div class="bios-form-grid-2">
                 <div class="bios-field">
                     <label for="{{ form.tipo.id_for_label }}" class="bios-label">Tipo *</label>
                     {{ form.tipo }}
@@ -61,7 +61,7 @@
                 {% if form.concepto.errors %}<p class="bios-error-msg">{{ form.concepto.errors.0 }}</p>{% endif %}
             </div>
 
-            <div class="form-grid-2">
+            <div class="bios-form-grid-2">
                 <div class="bios-field">
                     <label for="{{ form.monto.id_for_label }}" class="bios-label">Monto *</label>
                     {{ form.monto }}
@@ -75,8 +75,8 @@
             </div>
 
             <div class="bios-form-actions">
-                <a href="{{ cancel_url }}" class="bios-button-secondary">Cancelar</a>
-                <button type="submit" class="bios-button-primary">
+                <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">Cancelar</a>
+                <button type="submit" class="bios-button-primary bios-form-button-full">
                     <span class="material-symbols-outlined bios-icon-sm">save</span>
                     {{ action_label }}
                 </button>

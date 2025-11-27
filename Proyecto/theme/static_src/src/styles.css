@@ -540,6 +540,22 @@
         @apply bg-green-500/20 text-white;
     }
 
+    .tracking-table-actions-col {
+        @apply w-48 text-center;
+    }
+
+    .tracking-table-actions-cell {
+        @apply text-center;
+    }
+
+    .bios-table-actions {
+        @apply flex items-center justify-end gap-3;
+    }
+
+    .tracking-table-actions-cell .bios-table-actions {
+        @apply justify-center;
+    }
+
     .bios-input[type="date"]::-webkit-calendar-picker-indicator,
     .bios-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
         filter: invert(1) brightness(1.4);

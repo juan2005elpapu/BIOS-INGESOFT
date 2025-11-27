@@ -101,7 +101,7 @@
                             <th>Peso</th>
                             <th>Fecha</th>
                             <th>Notas</th>
-                            <th class="text-right">Acciones</th>
+                            <th class="tracking-table-actions-col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -116,10 +116,18 @@
                                 </td>
                                 <td class="text-slate-300">{{ registro.fecha|date:"d/m/Y H:i" }}</td>
                                 <td class="text-slate-400">{{ registro.notas|default:"—" }}</td>
-                                <td>
-                                    <div class="tracking-filter-actions justify-end">
-                                        <a href="{% url 'tracking:peso-update' registro.pk %}" class="bios-button-outline">Editar</a>
-                                        <a href="{% url 'tracking:peso-delete' registro.pk %}" class="bios-button-outline bios-button-delete">Eliminar</a>
+                                <td class="tracking-table-actions-cell">
+                                    <div class="bios-table-actions">
+                                        <a href="{% url 'tracking:peso-update' registro.pk %}"
+                                           class="bios-button-outline bios-table-action-button">
+                                            <span class="material-symbols-outlined bios-icon-sm">edit</span>
+                                            Editar
+                                        </a>
+                                        <a href="{% url 'tracking:peso-delete' registro.pk %}"
+                                           class="bios-button-outline bios-button-delete bios-table-action-button">
+                                            <span class="material-symbols-outlined bios-icon-sm">delete</span>
+                                            Eliminar
+                                        </a>
                                     </div>
                                 </td>
                             </tr>
