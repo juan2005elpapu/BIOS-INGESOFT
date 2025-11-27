@@ -34,8 +34,14 @@
                     {% endfor %}
                 </div>
                 <div class="bios-form-actions">
-                    <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">Cancelar</a>
-                    <button type="submit" class="bios-button-primary bios-form-button-full">{{ action_label }}</button>
+                    <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">
+                        <span class="material-symbols-outlined bios-icon-sm">arrow_back</span>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="bios-button-primary bios-form-button-full">
+                        <span class="material-symbols-outlined bios-icon-sm">check</span>
+                        {{ action_label }}
+                    </button>
                 </div>
             </form>
         </div>

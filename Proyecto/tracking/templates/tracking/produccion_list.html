@@ -2,160 +2,176 @@
 {% load static %}
 {% block title %}Control de producción{% endblock %}
 {% block content %}
-<div class="bios-main">
-    <div class="tracking-container">
-        <header class="tracking-header">
-            <div class="batch-title-section">
-                <p class="tracking-eyebrow">Tracking · Producción</p>
-                <h1 class="batch-title">Control de producción</h1>
-                <p class="batch-subtitle">Supervisa los registros de producción por animal y tipo.</p>
-            </div>
-            <a href="{% url 'tracking:produccion-create' %}" class="bios-button-primary batch-header-button">Nuevo registro</a>
-        </header>
-
-        <div class="tracking-tabs">
-            <a href="{% url 'tracking:peso-list' %}" class="tracking-tab">Pesos</a>
-            <a href="{% url 'tracking:produccion-list' %}" class="tracking-tab tracking-tab--active">Producción</a>
+<div class="tracking-container">
+    <header class="tracking-header">
+        <div class="batch-title-section">
+            <p class="tracking-eyebrow">Tracking · Producción</p>
+            <h1 class="batch-title">Control de producción</h1>
+            <p class="batch-subtitle">Supervisa los registros de producción por animal y tipo.</p>
         </div>
+        <a href="{% url 'tracking:produccion-create' %}" class="bios-button-primary batch-header-button">
+            <span class="material-symbols-outlined bios-icon-base">add</span>
+            Nuevo registro
+        </a>
+    </header>
 
-        <div class="tracking-stats-grid">
-            <div class="tracking-stat-card">
-                <p class="batch-subtitle">Registros totales</p>
-                <p class="text-2xl font-semibold text-white">{{ stats.total }}</p>
+    <div class="tracking-tabs">
+        <a href="{% url 'tracking:peso-list' %}" class="tracking-tab">Pesos</a>
+        <a href="{% url 'tracking:produccion-list' %}" class="tracking-tab tracking-tab--active">Producción</a>
+    </div>
+
+    <div class="tracking-stats-grid">
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Registros totales</p>
+            <p class="text-2xl font-semibold text-white">{{ stats.total }}</p>
+        </div>
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Cantidad acumulada</p>
+            <p class="text-2xl font-semibold text-white">
+                {% if stats.sum %}
+                    {{ stats.sum|floatformat:2 }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Último registro</p>
+            <p class="text-2xl font-semibold text-white">
+                {% if stats.latest %}
+                    {{ stats.latest.tipo }} · {{ stats.latest.fecha|date:"d/m/Y H:i" }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="tracking-filter-card">
+        <form method="get" class="tracking-filter-form" data-tracking-filter-form>
+            <div>
+                <label class="bios-label">Lote</label>
+                <select name="batch" class="bios-select" data-filter-lot>
+                    <option value="">Todos</option>
+                    {% for lote in batches %}
+                        <option value="{{ lote.id }}" {% if filters.batch == lote.id|stringformat:"s" %}selected{% endif %}>
+                            {{ lote.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
-            <div class="tracking-stat-card">
-                <p class="batch-subtitle">Cantidad acumulada</p>
-                <p class="text-2xl font-semibold text-white">
-                    {% if stats.sum %}
-                        {{ stats.sum|floatformat:2 }}
+            <div>
+                <label class="bios-label">Animal</label>
+                <select name="animal"
+                        class="bios-select"
+                        data-filter-animal
+                        data-selected="{{ filters.animal }}"
+                        {% if not filters.batch %}disabled{% endif %}>
+                    {% if filters.batch %}
+                        <option value="">Todos los animales</option>
                     {% else %}
-                        —
+                        <option value="">Selecciona un lote primero</option>
                     {% endif %}
-                </p>
+                    {% for animal in animals %}
+                        <option value="{{ animal.id }}" {% if filters.animal == animal.id|stringformat:"s" %}selected{% endif %}>
+                            {{ animal.codigo|default:animal.especie }} · {{ animal.batch.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
-            <div class="tracking-stat-card">
-                <p class="batch-subtitle">Último registro</p>
-                <p class="text-sm text-slate-300">
-                    {% if stats.latest %}
-                        {{ stats.latest.tipo }} · {{ stats.latest.fecha|date:"d/m/Y H:i" }}
-                    {% else %}
-                        —
-                    {% endif %}
-                </p>
+            <div>
+                <label class="bios-label">Tipo</label>
+                <input type="text" name="tipo" value="{{ filters.tipo }}" class="bios-input" placeholder="Leche, lana, etc.">
             </div>
-        </div>
+            <div>
+                <label class="bios-label">Desde</label>
+                <input type="date" name="start" value="{{ filters.start }}" class="bios-input">
+            </div>
+            <div>
+                <label class="bios-label">Hasta</label>
+                <input type="date" name="end" value="{{ filters.end }}" class="bios-input">
+            </div>
+            <div class="tracking-filter-actions md:col-span-5">
+                <button type="submit" class="bios-button-primary bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-sm">search</span>
+                    Aplicar filtros
+                </button>
+                <a href="{% url 'tracking:produccion-list' %}" class="bios-button-outline bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-sm">restart_alt</span>
+                    Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
 
-        <div class="tracking-filter-card">
-            <form method="get" class="tracking-filter-form" data-tracking-filter-form>
-                <div>
-                    <label class="bios-label">Lote</label>
-                    <select name="batch" class="bios-select" data-filter-lot>
-                        <option value="">Todos</option>
-                        {% for lote in batches %}
-                            <option value="{{ lote.id }}" {% if filters.batch == lote.id|stringformat:"s" %}selected{% endif %}>
-                                {{ lote.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="bios-label">Animal</label>
-                    <select name="animal"
-                            class="bios-select"
-                            data-filter-animal
-                            data-selected="{{ filters.animal }}"
-                            {% if not filters.batch %}disabled{% endif %}>
-                        {% if filters.batch %}
-                            <option value="">Todos los animales</option>
-                        {% else %}
-                            <option value="">Selecciona un lote primero</option>
-                        {% endif %}
-                        {% for animal in animals %}
-                            <option value="{{ animal.id }}" {% if filters.animal == animal.id|stringformat:"s" %}selected{% endif %}>
-                                {{ animal.codigo|default:animal.especie }} · {{ animal.batch.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="bios-label">Tipo</label>
-                    <input type="text" name="tipo" value="{{ filters.tipo }}" class="bios-input" placeholder="Leche, lana, etc.">
-                </div>
-                <div>
-                    <label class="bios-label">Desde</label>
-                    <input type="date" name="start" value="{{ filters.start }}" class="bios-input">
-                </div>
-                <div>
-                    <label class="bios-label">Hasta</label>
-                    <input type="date" name="end" value="{{ filters.end }}" class="bios-input">
-                </div>
-                <div class="tracking-filter-actions md:col-span-5">
-                    <button type="submit" class="bios-button-primary bios-form-button-full">Aplicar filtros</button>
-                    <a href="{% url 'tracking:produccion-list' %}" class="bios-button-outline bios-form-button-full">Limpiar</a>
-                </div>
-            </form>
-        </div>
-
-        {% if producciones %}
-            <div class="tracking-table-wrapper">
-                <table class="tracking-table">
-                    <thead>
-                        <tr>
-                            <th>Animal</th>
-                            <th>Tipo</th>
-                            <th>Cantidad</th>
-                            <th>Fecha</th>
-                            <th class="text-right">Acciones</th>
+    {% if producciones %}
+        <div class="tracking-table-wrapper">
+            <table class="tracking-table">
+                <thead>
+                    <tr>
+                        <th>Animal</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Fecha</th>
+                        <th class="tracking-table-actions-col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in producciones %}
+                        <tr class="tracking-row">
+                            <td>
+                                <p class="font-semibold text-white">{{ registro.animal.codigo|default:registro.animal.especie }}</p>
+                                <p class="text-xs text-slate-400">{{ registro.animal.batch.nombre }}</p>
+                            </td>
+                            <td>
+                                <span class="tracking-badge tracking-badge--produccion">{{ registro.tipo }}</span>
+                            </td>
+                            <td class="text-slate-200">{{ registro.cantidad }}</td>
+                            <td class="text-slate-300">{{ registro.fecha|date:"d/m/Y H:i" }}</td>
+                            <td class="tracking-table-actions-cell">
+                                <div class="bios-table-actions">
+                                    <a href="{% url 'tracking:produccion-update' registro.pk %}"
+                                        class="bios-button-outline bios-table-action-button">
+                                        <span class="material-symbols-outlined bios-icon-sm">edit</span>
+                                        Editar
+                                    </a>
+                                    <a href="{% url 'tracking:produccion-delete' registro.pk %}"
+                                        class="bios-button-outline bios-button-delete bios-table-action-button">
+                                        <span class="material-symbols-outlined bios-icon-sm">delete</span>
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for registro in producciones %}
-                            <tr class="tracking-row">
-                                <td>
-                                    <p class="font-semibold text-white">{{ registro.animal.codigo|default:registro.animal.especie }}</p>
-                                    <p class="text-xs text-slate-400">{{ registro.animal.batch.nombre }}</p>
-                                </td>
-                                <td>
-                                    <span class="tracking-badge tracking-badge--produccion">{{ registro.tipo }}</span>
-                                </td>
-                                <td class="text-slate-200">{{ registro.cantidad }}</td>
-                                <td class="text-slate-300">{{ registro.fecha|date:"d/m/Y H:i" }}</td>
-                                <td>
-                                    <div class="tracking-filter-actions justify-end">
-                                        <a href="{% url 'tracking:produccion-update' registro.pk %}" class="bios-button-outline">Editar</a>
-                                        <a href="{% url 'tracking:produccion-delete' registro.pk %}" class="bios-button-outline bios-button-delete">Eliminar</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-            {% if is_paginated %}
-                <div class="batch-pagination mt-6">
-                    <div class="batch-pagination-info">
-                        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-                    </div>
-                    <div class="bios-pagination-nav">
-                        {% if page_obj.has_previous %}
-                            <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.previous_page_number }}" class="bios-button-outline">Anterior</a>
-                        {% endif %}
-                        {% if page_obj.has_next %}
-                            <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.next_page_number }}" class="bios-button-outline">Siguiente</a>
-                        {% endif %}
-                    </div>
+        {% if is_paginated %}
+            <div class="batch-pagination mt-6">
+                <div class="batch-pagination-info">
+                    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
                 </div>
-            {% endif %}
-        {% else %}
-            <div class="tracking-empty-state">
-                <h2 class="batch-empty-title">Sin registros de producción</h2>
-                <p class="batch-empty-description">Registra la primera producción para comenzar el seguimiento.</p>
-                <a href="{% url 'tracking:produccion-create' %}" class="bios-button-primary">Registrar producción</a>
+                <div class="bios-pagination-nav">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.previous_page_number }}" class="bios-button-outline">Anterior</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.next_page_number }}" class="bios-button-outline">Siguiente</a>
+                    {% endif %}
+                </div>
             </div>
         {% endif %}
-    </div>
+    {% else %}
+        <div class="tracking-empty-state">
+            <h2 class="batch-empty-title">Sin registros de producción</h2>
+            <p class="batch-empty-description">Registra la primera producción para comenzar el seguimiento.</p>
+            <a href="{% url 'tracking:produccion-create' %}" class="bios-button-primary">Registrar producción</a>
+        </div>
+    {% endif %}
 </div>
+
 {% endblock %}
 
 {% block extra_scripts %}

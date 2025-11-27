@@ -1,0 +1,91 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block topbar_title %}{{ title|default:"Costo" }}{% endblock %}
+
+{% block content %}
+<div class="bios-form-container">
+    <div class="batch-header">
+        <div class="bios-form-header">
+            <div class="bios-card-icon">
+                <span class="material-symbols-outlined">request_quote</span>
+            </div>
+            <div>
+                <h1 class="batch-title">{{ title }}</h1>
+                <p class="batch-subtitle">{{ subtitle }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bios-card">
+        <form method="post" class="bios-auth-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="bios-error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="bios-field">
+                    <label for="{{ form.batch.id_for_label }}" class="bios-label">Lote *</label>
+                    {{ form.batch }}
+                    {% if form.batch.errors %}<p class="bios-error-msg">{{ form.batch.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="bios-field">
+                    <label for="{{ form.animal.id_for_label }}" class="bios-label">Animal (opcional)</label>
+                    {{ form.animal }}
+                    {% if form.animal.errors %}<p class="bios-error-msg">{{ form.animal.errors.0 }}</p>{% endif %}
+                    <p class="bios-help-text">Si no seleccionas un animal, el costo se asociará solo al lote.</p>
+                </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="bios-field">
+                    <label for="{{ form.tipo.id_for_label }}" class="bios-label">Tipo *</label>
+                    {{ form.tipo }}
+                    {% if form.tipo.errors %}<p class="bios-error-msg">{{ form.tipo.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="bios-field">
+                    <label for="{{ form.fecha.id_for_label }}" class="bios-label">Fecha *</label>
+                    {{ form.fecha }}
+                    {% if form.fecha.errors %}<p class="bios-error-msg">{{ form.fecha.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+                <div class="bios-field">
+                    <label for="{{ form.concepto.id_for_label }}" class="bios-label">Concepto *</label>
+                    {{ form.concepto }}
+                    {% if form.concepto.errors %}<p class="bios-error-msg">{{ form.concepto.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="bios-field">
+                    <label for="{{ form.monto.id_for_label }}" class="bios-label">Monto *</label>
+                    {{ form.monto }}
+                    {% if form.monto.errors %}<p class="bios-error-msg">{{ form.monto.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+
+            <div class="bios-field">
+                <label for="{{ form.notas.id_for_label }}" class="bios-label">Notas</label>
+                {{ form.notas }}
+                {% if form.notas.errors %}<p class="bios-error-msg">{{ form.notas.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div class="bios-form-actions">
+                <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-sm">arrow_back</span>
+                    Cancelar
+                </a>
+                <button type="submit" class="bios-button-primary bios-form-button-full">
+                    <span class="material-symbols-outlined bios-icon-sm">
+                        {% if object %}check{% else %}save{% endif %}
+                    </span>
+                    {{ action_label }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

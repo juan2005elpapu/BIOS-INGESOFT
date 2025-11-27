@@ -1,0 +1,195 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block topbar_title %}Costos{% endblock %}
+
+{% block content %}
+<div class="batch-container space-y-6">
+    <div class="batch-header">
+        <div class="batch-title-section">
+            <p class="tracking-eyebrow">Finanzas · Costos</p>
+            <h1 class="batch-title">Control de costos</h1>
+            <p class="batch-subtitle">Visualiza y administra los gastos de tus lotes.</p>
+        </div>
+        <a href="{% url 'costs:add' %}" class="bios-button-primary batch-header-button">
+            <span class="material-symbols-outlined bios-icon-base">add</span>
+            Registrar costo
+        </a>
+    </div>
+
+    <div class="tracking-stats-grid">
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Registros</p>
+            <p class="text-2xl font-semibold text-white">{{ stats.total }}</p>
+        </div>
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Gasto total</p>
+            <p class="text-2xl font-semibold text-white">
+                {% if stats.sum %}
+                    $ {{ stats.sum|floatformat:2 }}
+                {% else %}
+                    $ 0.00
+                {% endif %}
+            </p>
+        </div>
+        <div class="tracking-stat-card">
+            <p class="batch-subtitle">Último registro</p>
+            <p class="text-2xl font-semibold text-white">
+                {% if stats.last_date %}
+                    {{ stats.last_date|date:"d/m/Y" }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="tracking-filter-card">
+        <form class="grid gap-6 lg:grid-cols-3">
+            <div class="grid gap-4">
+                <div class="bios-field">
+                    <label class="bios-label">Buscar</label>
+                    <input type="text" name="search" value="{{ filters.search }}" placeholder="Concepto o notas..." class="bios-input w-full" />
+                </div>
+                <div class="bios-field">
+                    <label class="bios-label">Tipo</label>
+                    <select name="tipo" class="bios-select">
+                        <option value="">Todos los tipos</option>
+                        {% for value, label in cost_types %}
+                            <option value="{{ value }}" {% if filters.tipo == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid gap-4">
+                <div class="bios-field">
+                    <label class="bios-label">Lote</label>
+                    <select name="batch" class="bios-select">
+                        <option value="">Todos los lotes</option>
+                        {% for lote in batches %}
+                            <option value="{{ lote.id }}" {% if filters.batch == lote.id|stringformat:"s" %}selected{% endif %}>{{ lote.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="bios-field">
+                    <label class="bios-label">Animal</label>
+                    <select name="animal" class="bios-select">
+                        <option value="">Todos los animales</option>
+                        {% for animal in animals %}
+                            <option value="{{ animal.id }}" {% if filters.animal == animal.id|stringformat:"s" %}selected{% endif %}>
+                                {{ animal.codigo|default:animal.especie }} - {{ animal.batch.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid gap-4">
+                <div class="bios-field">
+                    <label class="bios-label">Desde</label>
+                    <input type="date" name="start" value="{{ filters.start }}" class="bios-input w-full" />
+                </div>
+                <div class="bios-field">
+                    <label class="bios-label">Hasta</label>
+                    <input type="date" name="end" value="{{ filters.end }}" class="bios-input w-full" />
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 flex gap-4">
+                <button type="submit" class="bios-button-primary flex-1 inline-flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined bios-icon-sm">search</span>
+                    Aplicar filtros
+                </button>
+                <a href="{% url 'costs:list' %}" class="bios-button-outline flex-1 inline-flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined bios-icon-sm">restart_alt</span>
+                    Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    {% if costs %}
+        <div class="tracking-table-wrapper">
+            <table class="tracking-table">
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Lote</th>
+                        <th>Animal</th>
+                        <th>Tipo</th>
+                        <th class="tracking-table-actions-col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cost in costs %}
+                        <tr class="tracking-row">
+                            <td class="font-semibold text-white">{{ cost.concepto }}</td>
+                            <td>
+                                <span class="tracking-badge tracking-badge--produccion">${{ cost.monto|floatformat:0}}</span>
+                            </td>
+                            <td class="text-slate-300">{{ cost.fecha|date:"d/m/Y" }}</td>
+                            <td class="text-slate-300">{{ cost.batch.nombre }}</td>
+                            <td class="text-slate-300">
+                                {% if cost.animal %}
+                                    {{ cost.animal.codigo|default:cost.animal.especie }}
+                                {% else %}
+                                    General
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="tracking-badge tracking-badge--peso">{{ cost.get_tipo_display }}</span>
+                            </td>
+                            <td class="tracking-table-actions-cell">
+                                <div class="bios-table-actions">
+                                    <a href="{% url 'costs:edit' cost.id %}" class="bios-button-outline bios-table-action-button">
+                                        <span class="material-symbols-outlined bios-icon-sm">edit</span>
+                                        Editar
+                                    </a>
+                                    <form method="post" action="{% url 'costs:delete' cost.id %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="bios-button-outline bios-button-delete bios-table-action-button" onclick="return confirm('¿Seguro que deseas eliminar este costo?');">
+                                            <span class="material-symbols-outlined bios-icon-sm">delete</span>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_paginated %}
+            <div class="batch-pagination mt-6">
+                <div class="batch-pagination-info">
+                    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                </div>
+                <div class="bios-pagination-nav">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.previous_page_number }}" class="bios-button-outline">Anterior</a>
+                    {% endif %}
+                    {% if page_obj.has_next %}
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.next_page_number }}" class="bios-button-outline">Siguiente</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="bios-card bios-empty-state">
+            <div class="bios-card-icon">
+                <span class="material-symbols-outlined">request_quote</span>
+            </div>
+            <h3 class="batch-title">Sin costos registrados</h3>
+            <p class="batch-subtitle">Cuando registres gastos de tus lotes aparecerán aquí.</p>
+            <a href="{% url 'costs:add' %}" class="bios-button-primary">
+                <span class="material-symbols-outlined bios-icon-sm">add</span>
+                Registrar el primero
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

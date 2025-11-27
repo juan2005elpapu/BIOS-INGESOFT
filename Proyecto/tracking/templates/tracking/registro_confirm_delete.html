@@ -11,8 +11,14 @@
             <form method="post" class="mt-8 space-y-4">
                 {% csrf_token %}
                 <div class="bios-form-actions">
-                    <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">Cancelar</a>
-                    <button type="submit" class="bios-button-outline bios-button-delete bios-form-button-full">Eliminar</button>
+                    <a href="{{ cancel_url }}" class="bios-button-outline bios-form-button-full">
+                        <span class="material-symbols-outlined bios-icon-sm">arrow_back</span>
+                        Cancelar
+                    </a>
+                    <button type="submit" class="bios-button-outline bios-button-delete bios-form-button-full">
+                        <span class="material-symbols-outlined bios-icon-sm">delete</span>
+                        Eliminar
+                    </button>
                 </div>
             </form>
         </div>
