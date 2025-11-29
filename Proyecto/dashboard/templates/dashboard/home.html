@@ -1,0 +1,51 @@
+{% extends "basic.html" %}
+{% load static %}
+
+{% block topbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="batch-header">
+        <div class="batch-title-section">
+            <p class="tracking-eyebrow">Panel de control</p>
+            <h1 class="batch-title">Dashboard</h1>
+            <p class="batch-subtitle">Visualiza estadísticas y métricas de tu operación.</p>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="dashboard-tabs">
+        <a href="{% url 'dashboard:lotes' %}" class="dashboard-tab {% if active_tab == 'lotes' %}dashboard-tab--active{% endif %}">
+            <span class="material-symbols-outlined bios-icon-sm">inventory_2</span>
+            Lotes y Animales
+        </a>
+        <a href="{% url 'dashboard:tracking' %}" class="dashboard-tab {% if active_tab == 'tracking' %}dashboard-tab--active{% endif %}">
+            <span class="material-symbols-outlined bios-icon-sm">monitoring</span>
+            Tracking
+        </a>
+        <a href="{% url 'dashboard:costos' %}" class="dashboard-tab {% if active_tab == 'costos' %}dashboard-tab--active{% endif %}">
+            <span class="material-symbols-outlined bios-icon-sm">payments</span>
+            Costos
+        </a>
+    </div>
+
+    <!-- Contenido según pestaña activa -->
+    {% if active_tab == 'lotes' %}
+        {% include "dashboard/_tab_lotes.html" %}
+    {% elif active_tab == 'tracking' %}
+        {% include "dashboard/_tab_tracking.html" %}
+    {% elif active_tab == 'costos' %}
+        {% include "dashboard/_tab_costos.html" %}
+    {% endif %}
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- Datos para gráficas -->
+<script id="charts-data" type="application/json">{{ charts_json|safe }}</script>
+
+<!-- Script de inicialización -->
+<script src="{% static 'dashboard/charts.js' %}"></script>
+{% endblock %}

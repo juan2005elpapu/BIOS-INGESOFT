@@ -1,0 +1,85 @@
+<!-- Filtros -->
+<div class="dashboard-filter-card">
+    <form method="get" class="dashboard-filter-form">
+        <div class="bios-field">
+            <label class="bios-label">Lote</label>
+            <select name="lote" class="bios-select">
+                <option value="">Todos los lotes</option>
+                {% for lote in lotes_disponibles %}
+                    <option value="{{ lote.id }}" {% if filters.lote_id == lote.id|stringformat:"s" %}selected{% endif %}>
+                        {{ lote.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Especie</label>
+            <input type="text" name="especie" value="{{ filters.especie }}" placeholder="Ej: Bovino" class="bios-input">
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Ordenar por cantidad</label>
+            <select name="orden" class="bios-select">
+                <option value="">Por nombre</option>
+                <option value="desc" {% if filters.orden == 'desc' %}selected{% endif %}>Mayor a menor</option>
+            </select>
+        </div>
+        <div class="dashboard-filter-actions">
+            <button type="submit" class="bios-button-primary flex-1 inline-flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined bios-icon-sm">search</span>
+                Aplicar filtros
+            </button>
+            <a href="{% url 'dashboard:lotes' %}" class="bios-button-outline flex-1 inline-flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined bios-icon-sm">restart_alt</span>
+                Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- KPIs -->
+<div class="dashboard-kpi-grid">
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Total de lotes</p>
+        <p class="dashboard-kpi-value">{{ kpis.total_lotes }}</p>
+    </div>
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Total de animales</p>
+        <p class="dashboard-kpi-value">{{ kpis.total_animales }}</p>
+    </div>
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Promedio por lote</p>
+        <p class="dashboard-kpi-value">{{ kpis.promedio_por_lote }}</p>
+    </div>
+</div>
+
+<!-- Gráficas -->
+{% if kpis.total_animales > 0 %}
+<div class="dashboard-charts-grid">
+    <div class="dashboard-chart-card">
+        <h3 class="dashboard-chart-title">Animales por lote</h3>
+        <div class="dashboard-chart-container">
+            <canvas id="chart-por-lote"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-chart-card">
+        <h3 class="dashboard-chart-title">Distribución por especie</h3>
+        <div class="dashboard-chart-container">
+            <canvas id="chart-por-especie"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-chart-card lg:col-span-2">
+        <h3 class="dashboard-chart-title">Distribución por sexo</h3>
+        <div class="dashboard-chart-container">
+            <canvas id="chart-por-sexo"></canvas>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="dashboard-empty-state">
+    <div class="dashboard-empty-icon">
+        <span class="material-symbols-outlined">pets</span>
+    </div>
+    <h3 class="dashboard-empty-title">Sin datos disponibles</h3>
+    <p class="dashboard-empty-text">Agrega lotes y animales para ver estadísticas aquí.</p>
+</div>
+{% endif %}

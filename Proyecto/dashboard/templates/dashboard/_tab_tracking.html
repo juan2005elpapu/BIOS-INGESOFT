@@ -1,0 +1,91 @@
+<!-- Filtros -->
+<div class="dashboard-filter-card">
+    <form method="get" class="dashboard-filter-form">
+        <div class="bios-field">
+            <label class="bios-label">Lote</label>
+            <select name="lote" class="bios-select">
+                <option value="">Todos los lotes</option>
+                {% for lote in lotes_disponibles %}
+                    <option value="{{ lote.id }}" {% if filters.lote_id == lote.id|stringformat:"s" %}selected{% endif %}>
+                        {{ lote.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Animal</label>
+            <select name="animal" class="bios-select">
+                <option value="">Todos los animales</option>
+                {% for animal in animales_disponibles %}
+                    <option value="{{ animal.id }}" {% if filters.animal_id == animal.id|stringformat:"s" %}selected{% endif %}>
+                        {{ animal.codigo|default:animal.especie }} · {{ animal.batch__nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Tipo producción</label>
+            <input type="text" name="tipo" value="{{ filters.tipo_produccion }}" placeholder="Ej: Leche" class="bios-input">
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Desde</label>
+            <input type="date" name="start" value="{{ filters.fecha_inicio }}" class="bios-input">
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Hasta</label>
+            <input type="date" name="end" value="{{ filters.fecha_fin }}" class="bios-input">
+        </div>
+        <div class="dashboard-filter-actions">
+            <button type="submit" class="bios-button-primary flex-1 inline-flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined bios-icon-sm">search</span>
+                Aplicar filtros
+            </button>
+            <a href="{% url 'dashboard:tracking' %}" class="bios-button-outline flex-1 inline-flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined bios-icon-sm">restart_alt</span>
+                Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- KPIs -->
+<div class="dashboard-kpi-grid">
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Registros de peso</p>
+        <p class="dashboard-kpi-value">{{ kpis.total_pesos }}</p>
+    </div>
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Peso promedio</p>
+        <p class="dashboard-kpi-value">{{ kpis.peso_promedio }} kg</p>
+    </div>
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Producción total</p>
+        <p class="dashboard-kpi-value">{{ kpis.produccion_total }}</p>
+    </div>
+</div>
+
+<!-- Gráficas -->
+{% if kpis.total_pesos > 0 or kpis.total_producciones > 0 %}
+<div class="dashboard-charts-grid">
+    <div class="dashboard-chart-card">
+        <h3 class="dashboard-chart-title">Evolución de peso promedio</h3>
+        <div class="dashboard-chart-container--tall">
+            <canvas id="chart-pesos-mensuales"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-chart-card">
+        <h3 class="dashboard-chart-title">Producción mensual</h3>
+        <div class="dashboard-chart-container--tall">
+            <canvas id="chart-producciones-mensuales"></canvas>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="dashboard-empty-state">
+    <div class="dashboard-empty-icon">
+        <span class="material-symbols-outlined">monitoring</span>
+    </div>
+    <h3 class="dashboard-empty-title">Sin datos de seguimiento</h3>
+    <p class="dashboard-empty-text">Registra pesos y producciones para ver estadísticas aquí.</p>
+</div>
+{% endif %}

@@ -572,4 +572,89 @@
     .bios-input[type="datetime-local"]:hover::-webkit-calendar-picker-indicator {
         opacity: 1;
     }
+
+    /* Dashboard */
+    .dashboard-container {
+        @apply mx-auto w-full max-w-7xl space-y-6;
+    }
+
+    .dashboard-tabs {
+        @apply flex overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 text-sm font-semibold text-slate-400;
+    }
+
+    .dashboard-tab {
+        @apply flex-1 px-4 py-3 text-center transition hover:text-white inline-flex items-center justify-center gap-2;
+    }
+
+    .dashboard-tab--active {
+        @apply bg-green-500/20 text-white;
+    }
+
+    .dashboard-kpi-grid {
+        @apply grid gap-4 md:grid-cols-3;
+    }
+
+    .dashboard-kpi-card {
+        @apply rounded-2xl bg-slate-900 px-5 py-4 shadow ring-1 ring-slate-800;
+    }
+
+    .dashboard-kpi-label {
+        @apply text-sm text-slate-400;
+    }
+
+    .dashboard-kpi-value {
+        @apply text-2xl font-semibold text-white;
+    }
+
+    .dashboard-charts-grid {
+        @apply grid gap-6 lg:grid-cols-2;
+    }
+
+    .dashboard-chart-card {
+        @apply rounded-2xl bg-slate-900 px-5 py-5 shadow-xl ring-1 ring-slate-800;
+    }
+
+    .dashboard-chart-title {
+        @apply mb-4 text-sm font-semibold uppercase tracking-wide text-slate-400;
+    }
+
+    .dashboard-chart-container {
+        @apply relative h-64;
+    }
+
+    .dashboard-chart-container--tall {
+        @apply relative h-80;
+    }
+
+    .dashboard-filter-card {
+        @apply rounded-2xl bg-slate-900 px-5 py-4 shadow-xl ring-1 ring-slate-800;
+    }
+
+    .dashboard-filter-form {
+        @apply flex flex-wrap gap-4;
+    }
+
+    .dashboard-filter-form .bios-field {
+        @apply flex-1 min-w-48;
+    }
+
+    .dashboard-filter-actions {
+        @apply flex gap-3 w-full;
+    }
+
+    .dashboard-empty-state {
+        @apply flex flex-col items-center justify-center rounded-2xl bg-slate-900 py-16 text-center shadow-xl ring-1 ring-slate-800;
+    }
+
+    .dashboard-empty-icon {
+        @apply mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-slate-800 text-4xl text-slate-500;
+    }
+
+    .dashboard-empty-title {
+        @apply text-lg font-semibold text-white;
+    }
+
+    .dashboard-empty-text {
+        @apply mt-2 text-sm text-slate-400;
+    }
 }

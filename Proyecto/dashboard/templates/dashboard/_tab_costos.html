@@ -1,0 +1,93 @@
+<!-- Filtros -->
+<div class="dashboard-filter-card">
+    <form method="get" class="dashboard-filter-form">
+        <div class="bios-field">
+            <label class="bios-label">Lote</label>
+            <select name="lote" class="bios-select">
+                <option value="">Todos los lotes</option>
+                {% for lote in lotes_disponibles %}
+                    <option value="{{ lote.id }}" {% if filters.lote_id == lote.id|stringformat:"s" %}selected{% endif %}>
+                        {{ lote.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Tipo de costo</label>
+            <select name="tipo" class="bios-select">
+                <option value="">Todos los tipos</option>
+                {% for value, label in tipos_disponibles %}
+                    <option value="{{ value }}" {% if filters.tipo_costo == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Desde</label>
+            <input type="date" name="start" value="{{ filters.fecha_inicio }}" class="bios-input">
+        </div>
+        <div class="bios-field">
+            <label class="bios-label">Hasta</label>
+            <input type="date" name="end" value="{{ filters.fecha_fin }}" class="bios-input">
+        </div>
+        <div class="dashboard-filter-actions">
+            <button type="submit" class="bios-button-primary flex-1 inline-flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined bios-icon-sm">search</span>
+                Aplicar filtros
+            </button>
+            <a href="{% url 'dashboard:costos' %}" class="bios-button-outline flex-1 inline-flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined bios-icon-sm">restart_alt</span>
+                Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- KPIs -->
+<div class="dashboard-kpi-grid">
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Total de registros</p>
+        <p class="dashboard-kpi-value">{{ kpis.total_registros }}</p>
+    </div>
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Gasto total</p>
+        <p class="dashboard-kpi-value">$ {{ kpis.gasto_total|floatformat:0 }}</p>
+    </div>
+    <div class="dashboard-kpi-card">
+        <p class="dashboard-kpi-label">Promedio por registro</p>
+        <p class="dashboard-kpi-value">$ {{ kpis.promedio_por_registro|floatformat:0 }}</p>
+    </div>
+</div>
+
+<!-- Gráficas -->
+{% if kpis.total_registros > 0 %}
+<div class="dashboard-charts-grid">
+    <div class="dashboard-chart-card">
+        <h3 class="dashboard-chart-title">Gastos por tipo</h3>
+        <div class="dashboard-chart-container">
+            <canvas id="chart-por-tipo"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-chart-card">
+        <h3 class="dashboard-chart-title">Gastos por lote</h3>
+        <div class="dashboard-chart-container">
+            <canvas id="chart-por-lote-costos"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-chart-card lg:col-span-2">
+        <h3 class="dashboard-chart-title">Tendencia mensual</h3>
+        <div class="dashboard-chart-container--tall">
+            <canvas id="chart-mensual"></canvas>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="dashboard-empty-state">
+    <div class="dashboard-empty-icon">
+        <span class="material-symbols-outlined">payments</span>
+    </div>
+    <h3 class="dashboard-empty-title">Sin costos registrados</h3>
+    <p class="dashboard-empty-text">Registra gastos para ver estadísticas aquí.</p>
+</div>
+{% endif %}
