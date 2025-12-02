@@ -106,7 +106,7 @@ class CostFormTests(TestCase):
             user=self.user,
         )
         self.assertFalse(form.is_valid())
-        self.assertIn("animal", form.errors)
+        self.assertIn("__all__", form.errors)
 
     def test_rejects_future_date(self):
         future_date = date.today() + timedelta(days=1)
