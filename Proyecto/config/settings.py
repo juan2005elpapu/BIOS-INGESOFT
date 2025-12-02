@@ -246,6 +246,17 @@ UNFOLD = {
                     },
                 ],
             },
+            {
+                "title": _("Finanzas"),
+                "collapsible": True,
+                "items": [
+                    {
+                        "title": _("Costos"),
+                        "icon": "payments",
+                        "link": reverse_lazy("admin:costs_cost_changelist"),
+                    },
+                ],
+            },
         ],
     },
 }
