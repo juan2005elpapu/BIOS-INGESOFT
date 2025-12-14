@@ -1,20 +1,19 @@
 {% extends "basic.html" %}
 {% load static %}
-
-{% block topbar_title %}Gestión de Animales{% endblock %}
-
+{% block title %}Animales{% endblock %}
 {% block content %}
 <div class="batch-container">
-    <div class="batch-header">
+    <header class="batch-header">
         <div class="batch-title-section">
-            <h1 class="batch-title">Mis Animales</h1>
-            <p class="batch-subtitle">Administra tus animales de forma eficiente</p>
+            <p class="tracking-eyebrow">Gestión · Animales</p>
+            <h1 class="batch-title">Animales</h1>
+            <p class="batch-subtitle">Gestiona el inventario de animales de tu granja.</p>
         </div>
         <a href="{% url 'animals:add' %}" class="bios-button-primary batch-header-button">
             <span class="material-symbols-outlined bios-icon-base">add</span>
-            Agregar Animal
+            Nuevo animal
         </a>
-    </div>
+    </header>
 
     <div class="batch-search-card">
         <form method="get" class="batch-search-form">

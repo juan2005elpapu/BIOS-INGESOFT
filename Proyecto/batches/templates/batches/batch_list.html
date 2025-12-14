@@ -1,20 +1,19 @@
 {% extends "basic.html" %}
 {% load static %}
-
-{% block topbar_title %}Gestión de Lotes{% endblock %}
-
+{% block title %}Lotes{% endblock %}
 {% block content %}
 <div class="batch-container">
-    <div class="batch-header">
+    <header class="batch-header">
         <div class="batch-title-section">
-            <h1 class="batch-title">Mis Lotes</h1>
-            <p class="batch-subtitle">Administra tus lotes ganaderos</p>
+            <p class="tracking-eyebrow">Gestión · Lotes</p>
+            <h1 class="batch-title">Lotes</h1>
+            <p class="batch-subtitle">Administra y organiza los lotes de tu granja.</p>
         </div>
         <a href="{% url 'batches:create' %}" class="bios-button-primary batch-header-button">
             <span class="material-symbols-outlined bios-icon-base">add</span>
-            Crear Lote
+            Nuevo lote
         </a>
-    </div>
+    </header>
 
     <div class="batch-search-card">
         <form method="get" class="batch-search-form">
