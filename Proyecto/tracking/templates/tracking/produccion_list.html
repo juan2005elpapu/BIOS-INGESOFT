@@ -150,15 +150,33 @@
 
         {% if is_paginated %}
             <div class="batch-pagination mt-6">
+                <div class="bios-pagination-nav">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page=1" class="bios-button-outline">
+                            <span class="material-symbols-outlined bios-icon-sm">first_page</span>
+                            Primero
+                        </a>
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.previous_page_number }}" class="bios-button-outline">
+                            <span class="material-symbols-outlined bios-icon-sm">chevron_left</span>
+                            Anterior
+                        </a>
+                    {% endif %}
+                </div>
+                
                 <div class="batch-pagination-info">
                     <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
                 </div>
+                
                 <div class="bios-pagination-nav">
-                    {% if page_obj.has_previous %}
-                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.previous_page_number }}" class="bios-button-outline">Anterior</a>
-                    {% endif %}
                     {% if page_obj.has_next %}
-                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.next_page_number }}" class="bios-button-outline">Siguiente</a>
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.next_page_number }}" class="bios-button-outline">
+                            Siguiente
+                            <span class="material-symbols-outlined bios-icon-sm">chevron_right</span>
+                        </a>
+                        <a href="?{% if filters_query %}{{ filters_query }}&{% endif %}page={{ page_obj.paginator.num_pages }}" class="bios-button-outline">
+                            Último
+                            <span class="material-symbols-outlined bios-icon-sm">last_page</span>
+                        </a>
                     {% endif %}
                 </div>
             </div>
