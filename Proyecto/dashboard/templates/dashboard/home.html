@@ -18,15 +18,15 @@
     <div class="dashboard-tabs">
         <a href="{% url 'dashboard:lotes' %}" class="dashboard-tab {% if active_tab == 'lotes' %}dashboard-tab--active{% endif %}">
             <span class="material-symbols-outlined bios-icon-sm">inventory_2</span>
-            Lotes y Animales
+            <span class="hidden sm:inline">Lotes y Animales</span>
         </a>
         <a href="{% url 'dashboard:tracking' %}" class="dashboard-tab {% if active_tab == 'tracking' %}dashboard-tab--active{% endif %}">
             <span class="material-symbols-outlined bios-icon-sm">monitoring</span>
-            Tracking
+            <span class="hidden sm:inline">Tracking</span>
         </a>
         <a href="{% url 'dashboard:costos' %}" class="dashboard-tab {% if active_tab == 'costos' %}dashboard-tab--active{% endif %}">
             <span class="material-symbols-outlined bios-icon-sm">payments</span>
-            Costos
+            <span class="hidden sm:inline">Costos</span>
         </a>
     </div>
 
