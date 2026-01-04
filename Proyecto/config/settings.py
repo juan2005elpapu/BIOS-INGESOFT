@@ -12,15 +12,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 import socket
-from pathlib import Path
 import sys
+from pathlib import Path
 
-from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
-
-from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+from dotenv import load_dotenv
 
 # Force IPv4 for DNS resolution (Supabase IPv6 workaround)
 original_getaddrinfo = socket.getaddrinfo
@@ -47,6 +46,10 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
+# Heroku specific
+if "DYNO" in os.environ:
+    ALLOWED_HOSTS.append(".herokuapp.com")
+
 
 # Application definition
 
@@ -61,7 +64,7 @@ INSTALLED_APPS = [
     "tailwind",
     "theme",
     "accounts",
-    "batches.apps.BatchesConfig",  # <- Cambiar esta línea
+    "batches.apps.BatchesConfig",
     "animals",
     "tracking",
     "costs",
@@ -70,6 +73,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -120,19 +124,16 @@ if not DATABASE_URL:
 db_cfg = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
 
 # Forzar cierre de conexiones para tests
-db_cfg['OPTIONS'] = db_cfg.get('OPTIONS', {})
-db_cfg['CONN_HEALTH_CHECKS'] = True
+db_cfg["OPTIONS"] = db_cfg.get("OPTIONS", {})
+db_cfg["CONN_HEALTH_CHECKS"] = True
 
-DATABASES = {
-    "default": db_cfg
-}
+DATABASES = {"default": db_cfg}
 
 # Test configuration
-if 'test' in sys.argv:
-    DATABASES['default']['CONN_MAX_AGE'] = 0
-    # Usar base de datos de test persistente
-    DATABASES['default']['TEST'] = {
-        'NAME': 'test_postgres',
+if "test" in sys.argv:
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
+    DATABASES["default"]["TEST"] = {
+        "NAME": "test_postgres",
     }
 
 # Password validation
@@ -157,9 +158,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "es"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/Bogota"
 
 USE_I18N = True
 
@@ -172,6 +173,9 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "theme" / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# WhiteNoise para archivos estáticos en producción
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -281,4 +285,17 @@ LOGGING = {
         },
     },
 }
+
+# Security settings for production
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
