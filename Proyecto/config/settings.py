@@ -13,11 +13,24 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import socket
 from pathlib import Path
+import sys
 
+from django.core.exceptions import ImproperlyConfigured
 import dj_database_url
+
 from dotenv import load_dotenv
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
+
+# Force IPv4 for DNS resolution (Supabase IPv6 workaround)
+original_getaddrinfo = socket.getaddrinfo
+
+
+def forced_ipv4_getaddrinfo(host, port, family=0, type=0, proto=0, flags=0):
+    return original_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
+
+
+socket.getaddrinfo = forced_ipv4_getaddrinfo
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
@@ -88,40 +101,39 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
-SEARCH_PATH = os.getenv("DB_SEARCH_PATH", "public,extensions").strip()
+# === Supabase obligatoria ===
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
+SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET", "batches")
 
-def can_reach_host(host: str, port: int) -> bool:
-    try:
-        socket.create_connection((host, port), timeout=5)
-    except OSError:
-        return False
-    return True
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ImproperlyConfigured("Faltan SUPABASE_URL o SUPABASE_KEY en .env")
 
-def build_sqlite_config() -> dict:
-    return {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+USE_SUPABASE_STORAGE = True
+DEFAULT_FILE_STORAGE = "batches.storage.SupabaseStorage"
+
+# Base de datos: solo Supabase (Postgres)
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+if not DATABASE_URL:
+    raise ImproperlyConfigured("Falta DATABASE_URL para Supabase en .env")
+
+db_cfg = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
+
+# Forzar cierre de conexiones para tests
+db_cfg['OPTIONS'] = db_cfg.get('OPTIONS', {})
+db_cfg['CONN_HEALTH_CHECKS'] = True
+
+DATABASES = {
+    "default": db_cfg
+}
+
+# Test configuration
+if 'test' in sys.argv:
+    DATABASES['default']['CONN_MAX_AGE'] = 0
+    # Usar base de datos de test persistente
+    DATABASES['default']['TEST'] = {
+        'NAME': 'test_postgres',
     }
-
-if DATABASE_URL:
-    candidate_db = dj_database_url.parse(
-        DATABASE_URL,
-        conn_max_age=600,
-        ssl_require=True,
-    )
-    host = candidate_db.get("HOST") or ""
-    port = int(candidate_db.get("PORT") or 5432)
-    if host and can_reach_host(host, port):
-        if SEARCH_PATH:
-            candidate_db.setdefault("OPTIONS", {})
-            candidate_db["OPTIONS"]["options"] = f"-c search_path={SEARCH_PATH}"
-        DATABASES = {"default": candidate_db}
-    else:
-        DATABASES = {"default": build_sqlite_config()}
-else:
-    DATABASES = {"default": build_sqlite_config()}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -164,23 +176,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Configuración de almacenamiento Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-SUPABASE_BUCKET = os.getenv("SUPABASE_BUCKET", "agromanager-media")
-
-USE_SUPABASE_STORAGE = bool(SUPABASE_URL and SUPABASE_KEY)
-
-if USE_SUPABASE_STORAGE:
-    DEFAULT_FILE_STORAGE = "batches.storage.SupabaseStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 TAILWIND_APP_NAME = "theme"
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"

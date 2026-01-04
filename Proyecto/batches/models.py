@@ -1,7 +1,13 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from batches.storage import SupabaseStorage
 
+def get_batch_storage():
+    """Retorna SupabaseStorage si está habilitado."""
+    if getattr(settings, 'USE_SUPABASE_STORAGE', False):
+        return SupabaseStorage()
+    return None
 
 class BatchManager(models.Manager):
     def active_batches(self):
@@ -30,7 +36,8 @@ class Batch(models.Model):
         help_text=_("Ubicación física del lote")
     )
     imagen = models.ImageField(
-        upload_to="lotes/%Y/%m/",
+        upload_to="lotes/",
+        storage=get_batch_storage,
         verbose_name=_("Imagen del lote"),
         blank=True,
         null=True

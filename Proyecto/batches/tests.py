@@ -289,6 +289,8 @@ class BatchViewTests(TestCase):
 
 
 class BatchSignalTests(TestCase):
+    """Tests para signals sin imágenes (evita subir a Supabase)."""
+
     def setUp(self):
         self.user = User.objects.create_user(
             username="testuser",
@@ -296,57 +298,8 @@ class BatchSignalTests(TestCase):
             password="testpass123"
         )
 
-    def create_test_image(self, filename="test.png"):
-        image = BytesIO()
-        img = Image.new("RGB", (100, 100), color="red")
-        img.save(image, "PNG")
-        image.seek(0)
-
-        return SimpleUploadedFile(
-            filename,
-            image.getvalue(),
-            content_type="image/png"
-        )
-
-    def test_image_deleted_on_batch_delete(self):
-        image_file = self.create_test_image("delete_test.png")
-        batch = Batch.objects.create(
-            nombre="Lote Test",
-            usuario=self.user,
-            imagen=image_file
-        )
-
-        image_path = batch.imagen.name
-        storage = batch.imagen.storage
-
-        self.assertTrue(storage.exists(image_path))
-
-        batch.delete()
-
-        self.assertFalse(storage.exists(image_path))
-
-    def test_old_image_deleted_on_update(self):
-        old_image = self.create_test_image("old_image.png")
-        batch = Batch.objects.create(
-            nombre="Lote Test",
-            usuario=self.user,
-            imagen=old_image
-        )
-
-        old_image_path = batch.imagen.name
-        storage = batch.imagen.storage
-
-        self.assertTrue(storage.exists(old_image_path))
-
-        new_image = self.create_test_image("new_image.png")
-        batch.imagen = new_image
-        batch.save()
-
-        self.assertFalse(storage.exists(old_image_path))
-        self.assertTrue(storage.exists(batch.imagen.name))
-        self.assertNotEqual(old_image_path, batch.imagen.name)
-
     def test_no_error_when_deleting_batch_without_image(self):
+        """Verifica que eliminar un lote sin imagen no cause errores."""
         batch = Batch.objects.create(
             nombre="Lote Sin Imagen",
             usuario=self.user
@@ -356,3 +309,16 @@ class BatchSignalTests(TestCase):
             batch.delete()
         except Exception as e:
             self.fail(f"Deleting batch without image raised an exception: {e}")
+
+    def test_batch_can_be_updated_without_image(self):
+        """Verifica que actualizar un lote sin imagen funcione."""
+        batch = Batch.objects.create(
+            nombre="Lote Original",
+            usuario=self.user
+        )
+
+        batch.nombre = "Lote Actualizado"
+        batch.save()
+
+        batch.refresh_from_db()
+        self.assertEqual(batch.nombre, "Lote Actualizado")
