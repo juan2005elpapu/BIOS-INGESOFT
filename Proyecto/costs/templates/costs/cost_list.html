@@ -179,14 +179,16 @@
             </div>
         {% endif %}
     {% else %}
-        <div class="bios-card bios-empty-state">
-            <div class="bios-card-icon">
-                <span class="material-symbols-outlined">request_quote</span>
+        <div class="batch-empty-state">
+            <div class="batch-empty-icon-wrapper">
+                <span class="material-symbols-outlined bios-icon-lg">request_quote</span>
             </div>
-            <h3 class="batch-title">Sin costos registrados</h3>
-            <p class="batch-subtitle">Cuando registres gastos de tus lotes aparecerán aquí.</p>
+            <h3 class="batch-empty-title">Sin costos registrados</h3>
+            <p class="batch-empty-description">
+                Cuando registres gastos de tus lotes aparecerán aquí.
+            </p>
             <a href="{% url 'costs:add' %}" class="bios-button-primary">
-                <span class="material-symbols-outlined bios-icon-sm">add</span>
+                <span class="material-symbols-outlined bios-icon-base">add</span>
                 Registrar el primero
             </a>
         </div>

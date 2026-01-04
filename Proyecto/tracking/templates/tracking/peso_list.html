@@ -179,9 +179,15 @@
         {% endif %}
     {% else %}
         <div class="tracking-empty-state">
+            <div class="batch-empty-icon-wrapper">
+            <span class="material-symbols-outlined bios-icon-lg">route</span>
+            </div>
             <h2 class="batch-empty-title">Sin registros de peso</h2>
             <p class="batch-empty-description">Agrega el primer registro para comenzar a visualizar la evolución de tus animales.</p>
-            <a href="{% url 'tracking:peso-create' %}" class="bios-button-primary">Registrar peso</a>
+            <a href="{% url 'tracking:peso-create' %}" class="bios-button-primary">
+                <span class="material-symbols-outlined bios-icon-base">add</span>
+            Agregar primer registro
+            </a>
         </div>
     {% endif %}
 </div>
